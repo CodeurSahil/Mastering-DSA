@@ -35,7 +35,7 @@ def insert(val, pos):
 
 def delete(pos):
     global listLength, head;
-    if pos <= 0 | pos > listLength + 1:
+    if pos <= 0 | pos > listLength:
         print("\n~~Invalid Position: ", pos, "~~\n");
         return;
 
