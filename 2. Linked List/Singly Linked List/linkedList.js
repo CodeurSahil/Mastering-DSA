@@ -1,9 +1,9 @@
 const prompt = require('prompt-sync')({ sigint: true });    
 
-let linkedList = {}, listLenght = 0;
+let linkedList = {}, listLength = 0;
 
 function insert(val, pos) {
-    if(pos <= 0 | pos > listLenght + 1){
+    if(pos <= 0 | pos > listLength + 1){
         console.log("\n~~ Invalid Position ~~\n");
         return;
     }
@@ -25,12 +25,12 @@ function insert(val, pos) {
         newNode.next = pre.next;
         pre.next = newNode;
     }
-    listLenght++;
+    listLength++;
     console.log(`Insertion Successful at Position:- ${pos}. Value:- ${val}\n`);
 }
 
 function deleteNode(pos) {
-    if(pos <= 0 | pos > listLenght){
+    if(pos <= 0 | pos > listLength){
         console.log("\n~~ Invalid Position ~~\n");
         return;
     }
@@ -50,7 +50,7 @@ function deleteNode(pos) {
         toBeDeletedValue = pre.next.data;
         pre.next = pre.next.next;
     }
-    listLenght--;
+    listLength--;
     console.log(`\nDeletion Successful at Position:- ${pos}. Value:- ${toBeDeletedValue}\n`);
 }
 
@@ -62,7 +62,7 @@ function deleteNode(pos) {
         choice = Number.parseInt(prompt("Enter Your Choice:- "));
         switch (choice) {
             case 1:
-                if (listLenght == 0) {
+                if (listLength == 0) {
                     console.log(`\n~~ Linked List is Empty ~~\n`);
                     break;
                 }console.log('listStr',linkedList);
@@ -82,7 +82,7 @@ function deleteNode(pos) {
             case 3:
                 console.log('\n');
                 var num = Number.parseInt(prompt("Enter Your Number:- "));
-                insert(num, listLenght + 1); 
+                insert(num, listLength + 1); 
                 break;
             case 4:
                 console.log('\n');
@@ -91,21 +91,21 @@ function deleteNode(pos) {
                 insert(num, pos); 
                 break;
             case 5:
-                if (listLenght == 0) {
+                if (listLength == 0) {
                     console.log(`\n~~ Linked List is Empty ~~\n`);
                     break;
                 }
                 deleteNode(1);
                 break;
             case 6:
-                if (listLenght == 0) {
+                if (listLength == 0) {
                     console.log(`\n~~ Linked List is Empty ~~\n`);
                     break;
                 }
-                deleteNode(listLenght);
+                deleteNode(listLength);
                 break;
             case 7:
-                if (listLenght == 0) {
+                if (listLength == 0) {
                     console.log(`\n~~ Linked List is Empty ~~\n`);
                     break;
                 }
