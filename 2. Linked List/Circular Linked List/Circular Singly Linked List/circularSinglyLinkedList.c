@@ -91,7 +91,7 @@ void delete(int pos) { // Remove
         // 1 -> 2 -> 3
         deletedNode = temp -> next;
         temp -> next = deletedNode -> next;
-        deletedValue = deletedNode -> data;;
+        deletedValue = deletedNode -> data;
 
         if (deletedNode == last) {
             last = temp;

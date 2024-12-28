@@ -142,7 +142,7 @@ int main() {
             }
             break;
         case 8:
-            cout << "\List Length: " << listLength << "\n";
+            cout << "\nList Length: " << listLength << "\n";
             break;
         case 9:
             cout << "\n~~Thanks for using! Have a great day!~~";
