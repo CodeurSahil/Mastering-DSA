@@ -8,7 +8,7 @@ while (True) :
     choice = int(input("Enter Your Choice:- "));
     if(choice == 1):
         if (stackPointer + 1 == stackLength):
-            print("\n~~ Array is Full ~~\n");
+            print("\n~~ Stack is Full ~~\n");
             continue;
         stackPointer += 1;
         val = int(input("\nEnter Your Number:-"));
@@ -17,28 +17,28 @@ while (True) :
         continue;
     elif(choice == 2):
         if (stackPointer == -1):
-            print("\n~~ Array is Empty ~~\n");
+            print("\n~~ Stack is Empty ~~\n");
             continue;
         print("\nDeletion Successfull:- ", stack[stackPointer], "\n");
         stackPointer -= 1;
         continue;
     elif(choice == 3):
         if (stackPointer == -1):
-            print("\n~~ Array is Empty ~~\n");
+            print("\n~~ Stack is Empty ~~\n");
         else: 
             print("\nData Element:- ", stack[stackPointer], "\n");
         continue;
     elif(choice == 4):
         if (stackPointer == -1):
-            print("\n~~ Array is Empty ~~\n");
+            print("\n~~ Stack is Empty ~~\n");
         else: 
-            print("\n~~ Array is Not Empty ~~\n");
+            print("\n~~ Stack is Not Empty ~~\n");
         continue;
     elif(choice == 5):
         if (stackPointer + 1 == stackLength):
-            print("\n~~ Array is Full ~~\n");
+            print("\n~~ Stack is Full ~~\n");
         else: 
-            print("\n~~ Array is Not Full ~~\n");
+            print("\n~~ Stack is Not Full ~~\n");
         continue;
     elif(choice == 6):
         print("\n~~ Thanks For Using! Have a Great Day! ~~\n");
