@@ -41,7 +41,11 @@ int main() {
             pop();
             break;
         case 3:
-            printf("\nTop Element:- %d\n", stack[stackPointer]);
+            if (stackPointer == -1) {
+                printf("\n~~ Stack is Empty~~\n");
+            } else {
+                printf("\nTop Element:- %d\n", stack[stackPointer]);
+            }
             break;
         case 4:
             if (stackPointer == -1) {
