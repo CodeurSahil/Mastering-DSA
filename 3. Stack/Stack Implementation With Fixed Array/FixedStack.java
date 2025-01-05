@@ -10,7 +10,7 @@ public class FixedStack {
         Scanner myObj = new Scanner(System.in);
 
         int choice;
-        System.out.println("Hello! Here You Can Perform Following Array Operations!");
+        System.out.println("Hello! Here You Can Perform Following Stack Operations!");
         while (true) {
             System.out.println("1. Push(Insert)\n2. Pop(Delete)\n3. Peek(See Last Element)\n4. Is Empty(Checks weather Stack is Empty)\n5. Is Full(Checks weather Stack is Full)\n6. Exit");
             System.out.print("Enter Your Choice:- ");
