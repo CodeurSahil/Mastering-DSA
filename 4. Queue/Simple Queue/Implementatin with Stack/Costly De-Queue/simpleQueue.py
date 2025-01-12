@@ -11,31 +11,27 @@ class Queue:
 mainQueue = Queue();
 
 def enQueue(queue):
-    while (queue.primaryStack.top != -1):
-        queue.secondaryStack.data.append(queue.primaryStack.data.pop());
-        queue.secondaryStack.top += 1;
-        queue.primaryStack.top -= 1;
-
     num = int(input("\nEnter Your Number:- "));
 
     queue.primaryStack.data.append(num);
     queue.primaryStack.top += 1;
 
-    while (queue.secondaryStack.top != -1):
-        queue.primaryStack.data.append(queue.secondaryStack.data.pop());
-        queue.primaryStack.top += 1;
-        queue.secondaryStack.top -= 1;
-
     print("Insertion Successfull:- " + str(num) + "\n");
     return;
 
 def deQueue(queue):
-    if (queue.primaryStack.top == -1):
+    if(queue.secondaryStack.top == -1):
+        while (queue.primaryStack.top != -1):
+            queue.secondaryStack.data.append(queue.primaryStack.data.pop());
+            queue.secondaryStack.top += 1;
+            queue.primaryStack.top -= 1;
+
+    if (queue.secondaryStack.top == -1):
         print("\n~~ Queue is Empty! ~~\n");
         return;
 
-    removedVal = queue.primaryStack.data.pop();
-    queue.primaryStack.top -= 1;
+    removedVal = queue.secondaryStack.data.pop();
+    queue.secondaryStack.top -= 1;
 
     print("\nData Removed:- " + str(removedVal) + "\n");
     return;
@@ -51,13 +47,16 @@ while (True) :
         deQueue(mainQueue);
         continue;
     elif(choice == 3):
-        if (mainQueue.primaryStack.top == -1):
+        if (mainQueue.primaryStack.top == -1 and mainQueue.secondaryStack.top == -1):
             print("\n~~ Queue is Empty ~~\n");
+            continue;
+        if(mainQueue.secondaryStack.top != -1):
+            print("\nData Element:- ", str(mainQueue.secondaryStack.data[mainQueue.secondaryStack.top]), "\n");
         else: 
-            print("\nData Element:- ", str(mainQueue.primaryStack.data[mainQueue.primaryStack.top]), "\n");
+            print("\nData Element:- ", str(mainQueue.primaryStack.data[0]), "\n");
         continue;
     elif(choice == 4):
-        if (mainQueue.primaryStack.top == -1):
+        if (mainQueue.primaryStack.top == -1 and mainQueue.secondaryStack.top == -1):
             print("\n~~ Queue is Empty ~~\n");
         else: 
             print("\n~~ Queue is Not Empty ~~\n");
