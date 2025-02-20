@@ -54,33 +54,21 @@ void enQueue(DEQueue *dq, int type) {
     return;
 }
 
-void deQueue(DEQueue *dq, int type) {
+void deQueue(DEQueue *dq) {
     if (isEmpty(dq)) { //Checking if the Queue is Empty
         printf("\n~~ Queue is Empty! ~~\n");
         return;
     }
 
-    int toBeDeletedValue;
+    int toBeDeletedValue = dq->data[dq->front];
 
     if (dq->front == dq->rear) {
-        toBeDeletedValue = dq->data[dq->front];
         dq->front = dq->rear = -1; // Reset queue
-    } else if (type == 1) {
-        
-        toBeDeletedValue = dq->data[dq->front];
-
+    } else {
         if (dq->front == MAX_SIZE - 1) {
             dq->front = 0;
         } else {
             dq->front++;//2 -> 3 -> 4
-        }
-    } else if (type == 2) {
-        toBeDeletedValue = dq->data[dq->rear];
-
-        if (dq->rear == 0) {
-            dq->rear = MAX_SIZE - 1;
-        } else {
-            dq->rear--;//1 -> 0 -> 4
         }
     }
 
@@ -111,7 +99,7 @@ int main() {
     initializeQueue(dq);
     printf("Hello! Here You Can Perform Following Queue Operation!");
     while (1) {
-        printf("\n1. En-Queue Front\n2. En-Queue Rear\n3. De-Queue Front \n4. De-Queue Rear\n5. Peek Front\n6. Peek Rear\n7. Is Empty(Checks Queue is Empty)\n8. Is Full(Checks Queue is Full)\n9. Exit\nEnter Your Choice:- ");
+        printf("\n1. En-Queue Front\n2. En-Queue Rear\n3. De-Queue(Front)\n4. Peek Front\n5. Peek Rear\n6. Is Empty(Checks Queue is Empty)\n7. Is Full(Checks Queue is Full)\n8. Exit\nEnter Your Choice:- ");
         scanf("%d", &choice);
 
         switch (choice) {
@@ -122,32 +110,29 @@ int main() {
             enQueue(dq, 2);
             break;
         case 3:
-            deQueue(dq, 1);
+            deQueue(dq);
             break;
         case 4:
-            deQueue(dq, 2);
-            break;
-        case 5:
             peek(dq, 1);
             break;
-        case 6:
+        case 5:
             peek(dq, 2);
             break;
-        case 7:
+        case 6:
             if (isEmpty(dq)) {
                 printf("\n~~ Queue is Empty! ~~\n");
             } else {
                 printf("\n~~ Queue is Not Empty! ~~\n");
             }
             break;
-        case 8:
+        case 7:
             if (isFull(dq)) {
                 printf("\n~~ Queue is Full! ~~\n");
             } else {
                 printf("\n~~ Queue is Not Full! ~~\n");
             }
             break;
-        case 9:
+        case 8:
             printf("\n~~ Thanks For Using! Have a Great Day! ~~\n");
             return 0;
         default:

@@ -48,32 +48,21 @@ public class DeQueue {
         return;
     }
 
-    private void deQueue(DeQueue dq, String type) {
+    private void deQueue(DeQueue dq) {
         if (isEmpty(dq)) {
             System.err.println("\n~~ Queue is Empty ~~\n");
             return;
         }
 
-        int toBeDeletedData = 0;
+        int toBeDeletedData = dq.data[dq.front];
 
         if (dq.front == dq.rear) {
-            toBeDeletedData = dq.data[dq.front];
             dq.front = dq.rear = -1; // Reset queue
-        } else if (type == "FRONT") {
-            toBeDeletedData = dq.data[dq.front];
-    
+        } else {
             if (dq.front == MAX_SIZE - 1) {
                 dq.front = 0;
             } else {
-                dq.front++;//2 . 3 . 4
-            }
-        } else if (type == "REAR") {
-            toBeDeletedData = dq.data[dq.rear];
-    
-            if (dq.rear == 0) {
-                dq.rear = MAX_SIZE - 1;
-            } else {
-                dq.rear--;//1 . 0 . 4
+                dq.front++;
             }
         }
 
@@ -106,8 +95,7 @@ public class DeQueue {
         int choice;
         System.out.println("Hello! Here You Can Perform Following Queue Operations!");
         while (true) {
-            System.out.println(
-                    "1. En-Queue Front\n2. En-Queue Rear\n3. De-Queue Front \n4. De-Queue Rear\n5. Peek Front\n6. Peek Rear\n7. Is Empty(Checks Queue is Empty)\n8. Is Full(Checks Queue is Full)\n9. Exit");
+            System.out.println("1. En-Queue Front\n2. En-Queue Rear\n3. De-Queue(Front)\n4. Peek Front\n5. Peek Rear\n6. Is Empty(Checks Queue is Empty)\n7. Is Full(Checks Queue is Full)\n8. Exit");
             System.out.print("Enter Your Choice:- ");
             choice = myObj.nextInt();
 
@@ -119,32 +107,29 @@ public class DeQueue {
                     Q.enQueue(Q, myObj, "REAR");
                     break;
                 case 3:
-                    Q.deQueue(Q, "FRONT");
+                    Q.deQueue(Q);
                     break;
                 case 4:
-                    Q.deQueue(Q, "REAR");
-                    break;
-                case 5:
                     Q.peek(Q, "FRONT");
                     break;
-                case 6:
+                case 5:
                     Q.peek(Q, "REAR");
                     break;
-                case 7:
+                case 6:
                     if (Q.isEmpty(Q)) {
                         System.err.println("\n~~ Queue is Empty ~~\n");
                     } else {
                         System.err.println("\n~~ Queue is Not Empty ~~\n");
                     }
                     break;
-                case 8:
+                case 7:
                     if (Q.isFull(Q)) {
                         System.err.println("\n~~ Queue is Full ~~\n");
                     } else {
                         System.err.println("\n~~ Queue is Not Full ~~\n");
                     }
                     break;
-                case 9:
+                case 8:
                     System.out.println("\n~~Thanks for Using! Have a Great Day!~~\n");
                     myObj.close();
                     return;

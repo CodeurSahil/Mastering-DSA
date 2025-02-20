@@ -34,32 +34,21 @@ function enQueue(type) {
     return;
 }
 
-function deQueue(type) {
+function deQueue() {
     if (isEmpty()) {
         console.log(`\n~~ Queue is Empty ~~\n`);
         return;
     }
 
-    let toBeDeletedData;
+    let toBeDeletedData = data[front];
 
     if (front == rear) {
-        toBeDeletedData = data[front];
         front = rear = -1; // Reset queue
-    } else if (type == "FRONT") {
-        toBeDeletedData = data[front];
-
+    } else {
         if (front == MAX_SIZE - 1) {
             front = 0;
         } else {
             front++;
-        }
-    } else if (type == "REAR") {
-        toBeDeletedData = data[rear];
-
-        if (rear == 0) {
-            rear = MAX_SIZE - 1;
-        } else {
-            rear--;
         }
     }
 
@@ -93,12 +82,11 @@ function peek(type) {
     return;
 }
 
-
 (() => {
     let choice;
     console.log("Hello! Here You Can Perform Following Queue Operation!");
     while (1) {
-        console.log("1. En-Queue Front\n2. En-Queue Rear\n3. De-Queue Front \n4. De-Queue Rear\n5. Peek Front\n6. Peek Rear\n7. Is Empty(Checks Queue is Empty)\n8. Is Full(Checks Queue is Full)\n9. Exit");
+        console.log("1. En-Queue Front\n2. En-Queue Rear\n3. De-Queue(Front)\n4. Peek Front\n5. Peek Rear\n6. Is Empty(Checks Queue is Empty)\n7. Is Full(Checks Queue is Full)\n8. Exit");
         choice = Number.parseInt(prompt("Enter Your Choice:- "));
         switch (choice) {
             case 1:
@@ -108,32 +96,29 @@ function peek(type) {
                 enQueue("REAR");
                 break;
             case 3:
-                deQueue("FRONT");
+                deQueue();
                 break;
             case 4:
-                deQueue("REAR");
-                break;
-            case 5:
                 peek("FRONT");
                 break;
-            case 6:
+            case 5:
                 peek("REAR");
                 break;
-            case 7:
+            case 6:
                 if (isEmpty()) {
                     console.log(`\n~~ Queue is Empty ~~\n`);
                 } else {
                     console.log(`\n~~ Queue is Not Empty ~~\n`);
                 }
                 break;
-            case 8:
+            case 7:
                 if (isFull()) {
                     console.log(`\n~~ Queue is Full ~~\n`);
                 } else {
                     console.log(`\n~~ Queue is Not Full ~~\n`);
                 }
                 break;
-            case 9:
+            case 8:
                 console.log(`\n~~ Thanks For Using! Have a Great Day! ~~\n`);
                 return;
             default:

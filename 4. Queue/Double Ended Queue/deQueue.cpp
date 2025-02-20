@@ -19,7 +19,7 @@ bool isEmpty(DEQueue *dq) {
 }
 
 bool isFull(DEQueue *dq) {
-    return (dq->front == -1 && dq->rear == MAX_SIZE - 1) || (dq->front == dq->rear + 1);
+    return (dq->front == 0 && dq->rear == MAX_SIZE - 1) || (dq->front == dq->rear + 1);
 }
 
 void enQueue(DEQueue *dq, int type) {

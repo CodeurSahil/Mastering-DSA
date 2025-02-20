@@ -127,20 +127,20 @@ int main() {
             break;
         case 6:
             if (isEmpty(dq)) {
-                printf("\n~~ Queue is Empty! ~~\n");
+                cout << "\n~~ Queue is Empty! ~~\n";
             } else {
-                printf("\n~~ Queue is Not Empty! ~~\n");
+                cout << "\n~~ Queue is Not Empty! ~~\n";
             }
             break;
         case 7:
             if (isFull(dq)) {
-                printf("\n~~ Queue is Full! ~~\n");
+                cout << "\n~~ Queue is Full! ~~\n";
             } else {
-                printf("\n~~ Queue is Not Full! ~~\n");
+                cout << "\n~~ Queue is Not Full! ~~\n";
             }
             break;
         case 8:
-            printf("\n~~ Thanks For Using! Have a Great Day! ~~\n");
+            cout << "\n~~ Thanks For Using! Have a Great Day! ~~\n";
             return 0;
         default:
             cout << "Please Enter a Vaild Input!\n";
