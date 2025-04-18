@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+using namespace std;
 
 struct Node {  
     int data;   
@@ -20,7 +20,7 @@ struct Node * createNode(int data) {
     struct Node *temp = (struct Node *)malloc(sizeof(struct Node));
 
     if (temp == NULL) {
-        printf("Memory allocation failed.\n");
+        cout << "Memory allocation failed.\n";
         exit(1); // Exit the program on allocation failure
     }
 
@@ -36,22 +36,22 @@ struct Node * createNode(int data) {
 void insert() { // Insert
     int val;
 
-    printf("\nEnter Value: ");
-    scanf("%d", &val);
+    cout << "\nEnter Value: ";
+    cin >> val;
 
     struct Node *newNode = createNode(val);
 
     if (root == NULL) {
         root = newNode;
-        printf("Insertion Successful. Value: %d\n", val);
+        cout << "Insertion Successful. Value: " << val << "\n";
         return;
     }
 
-    struct Node* temp = root;
-
+    struct Node* temp = root; 
+    
     while (1) {
         if (temp->data == val) {
-            printf("Value already exists in the tree.\n");
+            cout << "Value already exists in the tree.\n";
             free(newNode); // Free the allocated memory for the new node
             counter--;
             return;
@@ -70,7 +70,7 @@ void insert() { // Insert
         }
     }
 
-    printf("Insertion Successful. Value: %d\n", val);
+    cout << "Insertion Successful. Value: " << val << "\n";
 }
 
 struct Node* deleteNode(struct Node* root, int key) {
@@ -106,20 +106,20 @@ struct Node* deleteNode(struct Node* root, int key) {
 
 void search() { // Search 
     if (root == NULL) {
-        printf("\n~~Tree is Empty~~\n");
+        cout << "\n~~Tree is Empty~~\n";
         return;
     }
 
     int val;
 
-    printf("\nEnter Value: ");
-    scanf("%d", &val);
+    cout << "\nEnter Value: ";
+    cin >> val;
 
     struct Node* temp = root;
 
     while (1) {
         if (temp->data == val) {
-            printf("Element Found: %d\n", temp->data);
+            cout << "Element Found: " << temp->data << "\n";
             return;
         } else if (val < temp->data) {
             temp = temp->left;
@@ -128,16 +128,18 @@ void search() { // Search
         }
 
         if (temp == NULL) {
-            printf("Element not found!\n");
+            cout << "Element not found!\n";
             return;
         }
     }
+
+    return;
 }
 
 void inOrderTraversal(struct Node* node) {
     if (node != NULL){
         inOrderTraversal(node->left);
-        printf("%d ", node->data);
+        cout << node->data << " ";
         inOrderTraversal(node->right);
     }
     return;
@@ -145,7 +147,7 @@ void inOrderTraversal(struct Node* node) {
 
 void preOrderTraversal(struct Node* node) {
     if (node != NULL){
-        printf("%d ", node->data);
+        cout << node->data << " ";
         preOrderTraversal(node->left);
         preOrderTraversal(node->right);
     }
@@ -156,13 +158,13 @@ void postOrderTraversal(struct Node* node) {
     if (node != NULL){
         postOrderTraversal(node->left);
         postOrderTraversal(node->right);
-        printf("%d ", node->data);
+        cout << node->data << " ";
     }
     return;
 }
 
 void levelOrderTraversal() {
-    printf("\n");
+    cout << "\n";
     struct Node* queue[counter]; 
     int front = 0, rear = 0;
 
@@ -173,12 +175,12 @@ void levelOrderTraversal() {
     while (front < rear) {
         temp = queue[front++];
 
-        printf("%d ", temp->data);
+        cout << temp->data << " ";
 
         if (temp->left) queue[rear++] = temp->left;
         if (temp->right) queue[rear++] = temp->right;
     }
-    printf("\n");
+    cout << "\n";
 
     return;
 }
@@ -186,43 +188,43 @@ void levelOrderTraversal() {
 int main() {
     int choice;
 
-    printf("Hello! Here You Can Perform Following Binary Search Tree Operations!\n");
+    cout << "Hello! Here You Can Perform Following Binary Search Tree Operations!\n";
     while (1) {
-        printf("\n1. Show Data\n2. Insert\n3. Delete\n4. Search\n5. Exit\nEnter Your Choice: ");
-        scanf("%d", &choice);
+        cout << "\n1. Show Data\n2. Insert\n3. Delete\n4. Search\n5. Exit\nEnter Your Choice: ";
+        cin >> choice;
 
         int val, pos;
         switch (choice) {
         case 1:
             if (root == NULL) {
-                printf("\n~~Tree is Empty~~\n");
+                cout << "\n~~Tree is Empty~~\n";
                 break;
             }
 
             int choice2;
-            printf("\n1. In-Order Traversal(DFS)\n2. Pre-Order Traversal(DFS)\n3. Post-Order Traversal(DFS)\n4. Level-Order Traversal(BFS)\nEnter Your Choice: ");
-            scanf("%d", &choice2);
+            cout << "\n1. In-Order Traversal(DFS)\n2. Pre-Order Traversal(DFS)\n3. Post-Order Traversal(DFS)\n4. Level-Order Traversal(BFS)\nEnter Your Choice: ";
+            cin >> choice2;
             switch (choice2) {
             case 1:
-                printf("\n");
+                cout << "\n";
                 inOrderTraversal(root);
-                printf("\n");
+                cout << "\n";
                 break;
             case 2:
-                printf("\n");
+                cout << "\n";
                 preOrderTraversal(root);
-                printf("\n");
+                cout << "\n";
                 break;
             case 3:
-                printf("\n");
+                cout << "\n";
                 postOrderTraversal(root);
-                printf("\n");
+                cout << "\n";
                 break;
             case 4:
                 levelOrderTraversal();
                 break;
             default:
-                printf("\n~~Please Enter a Valid Input!~~\n");
+                cout << "\n~~Please Enter a Valid Input!~~\n";
             }
 
             break;
@@ -230,38 +232,38 @@ int main() {
             insert();
             break;
         case 3:
-            if (root == NULL) {
-                printf("\n~~Tree is Empty~~\n");
+            { // Braces were added to counter Error: jump bypasses variable initialization
+                if (root == NULL) {
+                    cout << "\n~~Tree is Empty~~\n";
+                    break;
+                }
+
+                int val;
+                cout << "\nEnter Value: ";
+                cin >> val;
+
+                int orignalCounter = counter;
+
+                root = deleteNode(root, val);
+
+                if (orignalCounter == counter) {
+                    cout << "\n~~Element Not Found!~~\n";
+                } else {
+                    cout << "Element Deleted: " << val << "\n";
+                }
+
                 break;
             }
-
-            int val;
-            printf("\nEnter Value: ");
-            scanf("%d", &val);
-
-            int originalCount = counter;
-
-            root = deleteNode(root, val);
-
-            // Check if anything changed
-            if (counter == originalCount) {
-                printf("Element not found!\n");
-            } else {
-                printf("Element Deleted: %d\n", val);
-            }
-
-            break;
         case 4:
             search();
             break;
         case 5:
-            printf("\n~~Thanks for using! Have a great day!~~");
+            cout << "\n~~Thanks for using! Have a great day!~~";
             return 0;
         default:
-            printf("\n~~Please Enter a Valid Input!~~\n");
+            cout << "\n~~Please Enter a Valid Input!~~\n";
         }
     }
 
     return 0;
 }
-
