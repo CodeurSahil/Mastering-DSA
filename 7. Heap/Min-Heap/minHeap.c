@@ -75,17 +75,10 @@ void insert() { // Insert
     arr[arrayLength++] = val;
 
     while (index != 0 && arr[getParent(index)] > arr[index]) {
-        printf("minHeap.c:79 %d %d", arr[index], arr[getParent(index)]);
         
         swap(index, getParent(index));
 
-        printf("minHeap.c:79 %d %d", arr[index], arr[getParent(index)]);
         index = getParent(index);
-    }
-
-    for (int i = 0; i < arrayLength; i++)
-    {
-        printf(", %d", arr[i]);
     }
 
     printf("Insertion Successful, Value: %d\n", val);
@@ -112,21 +105,29 @@ int main() {
     int choice;
     printf("Hello! Here You Can Perform Following Min Heap Operation!");
     while (1) {
-        printf("\n1. Insert\n2. Extraction of Minimum\n3. Delete at Index\n4. Peek (Get Minimum)\n5. Exit\nEnter Your Choice:- ");
+        printf("\n1. View(In Array)\n2. Insert\n3. Extraction of Minimum\n4. Delete at Index\n5. Peek (Get Minimum)\n6. Exit\nEnter Your Choice:- ");
         scanf("%d", &choice);
 
         switch (choice) {
         case 1:
-            insert();
+            for (int i = 0; i < arrayLength; i++) {
+                if (i == 0)
+                    printf("\nHeap: %d", arr[i]);
+                else
+                    printf(", %d", arr[i]);
+            }
             break;
         case 2:
+            insert();
+            break;
+        case 3:
             if (arrayLength == 0) {
                 printf("\n~~ Heap is Empty! ~~\n");
                 break;
             }
             extract(0);
             break;
-        case 3:
+        case 4:
             if (arrayLength == 0) {
                 printf("\n~~ Heap is Empty! ~~\n");
                 break;
@@ -135,12 +136,13 @@ int main() {
             int index;
             printf("\nInsert Index(Starts with 0):- ");
             scanf("%d", &index);
+
             extract(index);
             break;
-        case 4:
+        case 5:
             peek();
             break;
-        case 5:
+        case 6:
             printf("Thanks For Using! Have a Great Day!");
             free(arr);
             return 0;
