@@ -48,13 +48,20 @@ function peek() {
     console.log(`Value: ${val}\n`);
 }
 
-function insert() { // Insert
+function insert() {
     console.log("");
     let val =  Number.parseInt(prompt("Enter Number:- "));
+
+    let index = arrayLength;
     
     arr[arrayLength++] = val;
 
-    heapify(0);
+    while (index != 0 && arr[getParent(index)] > arr[index]) {
+        
+        swap(index, getParent(index));
+
+        index = getParent(index);
+    }
 
     console.log(`Insertion Successful, Value: ${val}\n`);
 }
