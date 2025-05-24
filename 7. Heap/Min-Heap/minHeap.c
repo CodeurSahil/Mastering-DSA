@@ -70,9 +70,16 @@ void insert() { // Insert
 
     manageArray(arrayLength + 1);
     
+    int index = arrayLength;
+    
     arr[arrayLength++] = val;
 
-    heapify(0);
+    while (index != 0 && arr[getParent(index)] > arr[index]) {
+        
+        swap(index, getParent(index));
+
+        index = getParent(index);
+    }
 
     printf("Insertion Successful, Value: %d\n", val);
 }

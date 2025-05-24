@@ -83,9 +83,16 @@ public class MinHeap {
 
         int val = scanner.nextInt();
 
+        int index = arrayLength;
+
         arr[arrayLength++] = val;
 
-        heapify(0);
+        while (index != 0 && arr[getParent(index)] > arr[index]) {
+
+            swap(index, getParent(index));
+
+            index = getParent(index);
+        }
 
         System.out.println("Insertion Successful, Value: " + val);
     }
