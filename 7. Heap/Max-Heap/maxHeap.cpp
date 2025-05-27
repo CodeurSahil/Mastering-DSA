@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+using namespace std;
 #include <math.h>
 
 int *arr = NULL, arrayLength = 0;
@@ -8,7 +8,7 @@ void manageArray(int len) {
     if (len > 0) {
         arr = (int *)realloc(arr, len * sizeof(int));
         if (arr == NULL) {
-            printf("Memory allocation failed.\n");
+            cout << "Memory allocation failed.\n";
             exit(1); // Exit the program on allocation failure
         }
     }
@@ -55,18 +55,18 @@ void heapify(int index) {
 
 void peek() {
     if (arrayLength == 0) {
-        printf("\n~~ Heap is Empty! ~~\n");
+        cout << "\n~~ Heap is Empty! ~~\n";
         return;
     }
 
     int val = arr[0];
-    printf("Value: %d\n", val);
+    cout << "Value: " << val << endl;
 }
 
 void insert() { // Insert
     int val;
-    printf("\nEnter Value:- ");
-    scanf("%d", &val);
+    cout << "\nEnter Value:- ";
+    cin >> val;
 
     manageArray(arrayLength + 1);
     
@@ -81,17 +81,17 @@ void insert() { // Insert
         index = getParent(index);
     }
 
-    printf("Insertion Successful, Value: %d\n", val);
+    cout << "Insertion Successful, Value: " << val << endl;
 }
 
 void extract(int index) {
     if (arrayLength < index) {
-        printf("\n~~ Index Value Not Present! ~~\n");
+        cout << "\n~~ Index Value Not Present! ~~\n";
         return;
     }
 
     int val = arr[index];
-    printf("Extracted Value: %d\n", val);
+    cout << "Extracted Value: " << val << endl;
 
     arr[index] = arr[arrayLength - 1];
 
@@ -103,22 +103,23 @@ void extract(int index) {
 
 int main() {
     int choice;
-    printf("Hello! Here You Can Perform Following Max Heap Operation!");
+    cout << "Hello! Here You Can Perform Following Max Heap Operation!";
     while (1) {
-        printf("\n1. View(In Array)\n2. Insert\n3. Extraction of Maximum\n4. Delete at Index\n5. Peek (Get Maximum)\n6. Exit\nEnter Your Choice:- ");
-        scanf("%d", &choice);
+        cout << "\n1. View(In Array)\n2. Insert\n3. Extraction of Maximum\n4. Delete at Index\n5. Peek (Get Maximum)\n6. Exit\nEnter Your Choice:- ";
+        cin >> choice;
 
         switch (choice) {
         case 1:
             if (arrayLength == 0) {
-                printf("\n~~ Heap is Empty! ~~\n");
+                cout << "\n~~ Heap is Empty! ~~\n";
                 break;
             }
+
             for (int i = 0; i < arrayLength; i++) {
                 if (i == 0)
-                    printf("\nHeap: %d", arr[i]);
+                    cout << "\nHeap: " << arr[i];
                 else
-                    printf(", %d", arr[i]);
+                    cout << ", " << arr[i];
             }
             break;
         case 2:
@@ -126,20 +127,20 @@ int main() {
             break;
         case 3:
             if (arrayLength == 0) {
-                printf("\n~~ Heap is Empty! ~~\n");
+                cout << "\n~~ Heap is Empty! ~~\n";
                 break;
             }
             extract(0);
             break;
         case 4:
             if (arrayLength == 0) {
-                printf("\n~~ Heap is Empty! ~~\n");
+                cout << "\n~~ Heap is Empty! ~~\n";
                 break;
             }
 
             int index;
-            printf("\nInsert Index(Starts with 0):- ");
-            scanf("%d", &index);
+            cout << "\nInsert Index(Starts with 0):- ";
+            cin >> index;
 
             extract(index);
             break;
@@ -147,11 +148,11 @@ int main() {
             peek();
             break;
         case 6:
-            printf("Thanks For Using! Have a Great Day!");
+            cout << "Thanks For Using! Have a Great Day!";
             free(arr);
             return 0;
         default:
-            printf("Please Enter a Vaild Input!\n");
+            cout << "Please Enter a Vaild Input!\n";
             break;
         }
     }
