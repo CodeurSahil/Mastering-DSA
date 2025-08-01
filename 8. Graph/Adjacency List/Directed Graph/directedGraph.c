@@ -147,9 +147,12 @@ void bfsTraversal(struct Graph* graph, int startVertex, int *visited) {
 
         struct Node* mainNode = graph->array[queue->data].head;
         while (mainNode) {
-            struct Node *node = createNode(mainNode->data);
-            lastQueueNode->next = node;
-            lastQueueNode = lastQueueNode->next;
+            if (!visited[queue->data]) {
+                struct Node *node = createNode(mainNode->data);
+                lastQueueNode->next = node;
+                lastQueueNode = lastQueueNode->next;
+            }
+            
             mainNode = mainNode->next;
         }
 

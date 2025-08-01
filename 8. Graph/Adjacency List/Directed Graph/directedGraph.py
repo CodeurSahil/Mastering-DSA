@@ -177,7 +177,6 @@ for i in range(edges):
         
     if (src == dest):
         print(f"~~ Source & Target Can't Be Same ~~\n")
-            # cout << "\n~~ Source & Target Can't Be Same ~~\n\n";
         i -= 1;
         continue;
 
