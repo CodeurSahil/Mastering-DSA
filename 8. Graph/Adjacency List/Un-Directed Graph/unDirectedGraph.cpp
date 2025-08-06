@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+using namespace std;
 
 // Structure for an adjacency list node
 struct Node {
@@ -50,10 +50,10 @@ struct Graph* createGraph(int vertex) {
     // Initialize each adjacency list as empty
     for (int i = 0; i < vertex; ++i) {
         if (graph->array[i].head) {
-            printf("\nVertex %d Already Exists!", i);
+            cout << "\nVertex " << i << " Already Exists!";
         } else {
             graph->array[i].head = NULL;
-            printf("\nVertex %d Added!", i);
+            cout << "\nVertex " << i << " Added!";
         }
     }
 
@@ -89,7 +89,7 @@ void bfsTraversal(struct Graph* graph, int startVertex, int *visited) {
         struct Node *temp = queue;
 
         if (!visited[queue->data]) {
-            printf("%d ", queue->data);
+            cout << queue->data << " ";
             visited[queue->data] = 1; //TRUE
         }
 
@@ -114,7 +114,7 @@ void dfsTraversal(struct Graph* graph, int startVertex, int *visited) {
         return;
     }
 
-    printf("%d ", startVertex);
+    cout << startVertex << " ";
     visited[startVertex] = 1;
 
     struct Node* mainNode = graph->array[startVertex].head;
@@ -124,20 +124,19 @@ void dfsTraversal(struct Graph* graph, int startVertex, int *visited) {
     }
 }
 
-void findAllPaths(struct Graph* graph, int *path, int startVertex, int endVertex, int index, int* visited) {
+void findAllPaths(struct Graph* graph, int *path, int startVertex, int endVertex, int index, int *visited) {
     path[index++] = startVertex;
     visited[startVertex] = 1;
 
     if (startVertex == endVertex) {
         for (int i = 0; i < index; i++) {
             if (i == index - 1) {
-                printf("%d", path[i]);
+                cout << path[i];
             } else {
-                printf("%d -> ", path[i]);
+                cout << path[i] << " -> ";
             }
-            
         }
-        printf("\n");
+        cout << "\n";
         return;
     }
 
@@ -151,27 +150,23 @@ void findAllPaths(struct Graph* graph, int *path, int startVertex, int endVertex
         
         mainNode = mainNode->next;
     }
-
-    visited[startVertex] = 0;
-
-    return;
 }
 
 int isCycleExistsUitls(struct Graph* graph, int startVertex, int *visited, int parent) {
     visited[startVertex] = 1;
 
     struct Node* mainNode = graph->array[startVertex].head;
-    while (mainNode) {  
+    while (mainNode) {
+        
         if (!visited[mainNode->data]) {
             int isCycle = isCycleExistsUitls(graph, mainNode->data, visited, startVertex);
             if (isCycle) {
                 return 1;
             }
         } else if (mainNode->data != parent) {
-            // If visited and not parent => cycle detected
             return 1;
         }
-        
+
         mainNode = mainNode->next;
     }
 
@@ -182,7 +177,7 @@ int isCyclic(struct Graph* graph) {
     int cycleExists = 0;
     int *visited = (int *)malloc(graph->vertex * sizeof(int));
 
-    printf("\n");
+    cout << "\n";
 
     for (int i = 0; i < graph->vertex; i++) {
         if (!visited[i]) {
@@ -191,7 +186,6 @@ int isCyclic(struct Graph* graph) {
                 break;
             }
         }
-        
     }
 
     free(visited);
@@ -205,85 +199,68 @@ void stackPush(int *stack, int data) {
     return;
 }
 
-void topologicalSort(struct Graph* graph, int startVertex, int *visited, int *stack) {
-    visited[startVertex] = 1;
-
-    struct Node* mainNode = graph->array[startVertex].head;
-    while (mainNode) {
-        if (!visited[mainNode->data]) {
-            topologicalSort(graph, mainNode->data, visited, stack);
-        }
-        mainNode = mainNode->next;
-    }
-
-    stackPush(stack, startVertex);
-    
-    return;
-}
-
-
 int main() {
-    printf("Hello! Here You Can Perform Following Directed Graph Operation!\n");
+    cout << "Hello! Here You Can Perform Following Directed Graph Operation!\n";
     
     int vertex;
-    printf("\nEnter the Number of Vertices(Node): ");
-    scanf("%d", &vertex);
+    cout << "\nEnter the Number of Vertices(Node): ";
+    cin >> vertex;
     
     struct Graph* graph = createGraph(vertex);
 
     int edges;
 
-    printf("\n\nEnter the Number of Edges: ");
-    scanf("%d", &edges);
+    cout << "\n\nEnter the Number of Edges: ";
+    cin >> edges;
 
     for (int i = 0; i < edges; i++) {
         int src, dest;
 
-        printf("Enter the Source of Edge %d: ", i + 1);
-        scanf("%d", &src);
-        printf("Enter the Destination of Edge %d: ", i + 1);
-        scanf("%d", &dest);
+        cout << "Enter the Source of Edge " << i + 1 << ": ";
+        cin >> src;
+        cout << "Enter the Destination of Edge " << i + 1 << ": ";
+        cin >> dest;
 
         if (src > graph->vertex - 1) {
-            printf("\n~~ %d Source Vertex Not Present ~~\n\n", src);
+            cout << "\n~~ " << src << " Source Vertex Not Present ~~\n\n";
             i--;
             continue;
         }
-
+        
         if (dest > graph->vertex - 1) {
-            printf("\n~~ %d Target Vertex Not Present ~~\n\n", dest);
+            cout << "\n~~ " << dest << " Target Vertex Not Present ~~\n\n";
             i--;
             continue;
         }
-
+        
         if (src == dest) {
-            printf("\n~~ Source & Target Can't Be Same ~~\n\n");
+            cout << "\n~~ Source & Target Can't Be Same ~~\n\n";
             i--;
             continue;
         }
 
         addEdge(graph, src, dest);
         addEdge(graph, dest, src);
-        printf("\n");
+        cout << "\n";
     }
 
     int choice, choice2;
 
     while (1) {
-        printf("\n1. Breadth First Search\n2. Depth First Search\n3. Find All Path's\n4. Is Cycle Exists\n5. Topological Sort\n6. Exit\nEnter Your Choice:- ");
-        scanf("%d", &choice);
+        cout << "\n1. Breadth First Search\n2. Depth First Search\n3. Find All Path's\n4. Is Cycle Exists\n5. Exit\nEnter Your Choice:- ";
+        cin >> choice;
 
         switch (choice) {
         case 1: {
             int *visited = (int *)malloc(graph->vertex * sizeof(int));
 
-            printf("\n");
+            cout << "\n";
 
             for (int i = 0; i < graph->vertex; i++) {
                 bfsTraversal(graph, i, visited);
             }
 
-            printf("\n");
+            cout << "\n";
 
             free(visited);
 
@@ -292,13 +269,13 @@ int main() {
         case 2: {
             int *visited = (int *)malloc(graph->vertex * sizeof(int));
 
-            printf("\n");
+            cout << "\n";
 
             for (int i = 0; i < graph->vertex; i++) {
                 dfsTraversal(graph, i, visited);
             }
 
-            printf("\n");
+            cout << "\n";
 
             free(visited);
 
@@ -309,13 +286,13 @@ int main() {
             int *path = (int *)malloc(2 * graph->vertex * sizeof(int));
             int *visited = (int *)malloc(graph->vertex * sizeof(int));
 
-            printf("\nEnter Start Vertex: ");
-            scanf("%d", &startVertex);
+            cout << "\nEnter Start Vertex: ";
+            cin >> startVertex;
 
-            printf("\nEnter End Vertex: ");
-            scanf("%d", &endVertex);
+            cout << "\nEnter End Vertex: ";
+            cin >> endVertex;
             
-            printf("\nPaths: \n");
+            cout << "\nPaths: \n";
             findAllPaths(graph, path, startVertex, endVertex, index, visited);
 
             free(path);
@@ -325,44 +302,19 @@ int main() {
         case 4: {
 
             if (isCyclic(graph)) {
-                printf("Cycle Exists\n");
+                cout << "Cycle Exists\n";
             } else {
-                printf("Cycle Does Not Exists\n");
+                cout << "Cycle Does Not Exists\n";
             }
 
             break;
         }  
-        case 5: {
-            if (isCyclic(graph)) {
-                printf("Cycle Exists! Can't Perform Topological Sort\n");
-                break;
-            }
-
-            int *visited = (int *) malloc(graph->vertex * sizeof(int));
-            int *stack = (int *) malloc(graph->vertex * sizeof(int));
-            
-            printf("\n");
-            pointer = 0;
-            for (int i = 0; i < graph->vertex; i++) {
-                if (!visited[i]) {
-                    topologicalSort(graph, i, visited, stack);
-                }
-            }
-
-            for (int i = graph->vertex - 1; i >= 0; i--) {
-                printf("%d ", stack[i]);
-            }
-            
-            free(visited);
-            free(stack);
-            break;
-        }
-        case 6:
-            printf("Thanks For Using! Have a Great Day!");
+        case 5: 
+            cout << "Thanks For Using! Have a Great Day!";
             free(graph);
             return 0;
         default:
-            printf("Please Enter a Vaild Input!\n");
+            cout << "Please Enter a Vaild Input!\n";
             break;
         }
     }

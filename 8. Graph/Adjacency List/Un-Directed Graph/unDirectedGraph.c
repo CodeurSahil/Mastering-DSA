@@ -182,8 +182,6 @@ int isCyclic(struct Graph* graph) {
     int cycleExists = 0;
     int *visited = (int *)malloc(graph->vertex * sizeof(int));
 
-    printf("\n");
-
     for (int i = 0; i < graph->vertex; i++) {
         if (!visited[i]) {
             if (isCycleExistsUitls(graph, i, visited, -1)) {
@@ -204,23 +202,6 @@ void stackPush(int *stack, int data) {
     pointer += 1;
     return;
 }
-
-void topologicalSort(struct Graph* graph, int startVertex, int *visited, int *stack) {
-    visited[startVertex] = 1;
-
-    struct Node* mainNode = graph->array[startVertex].head;
-    while (mainNode) {
-        if (!visited[mainNode->data]) {
-            topologicalSort(graph, mainNode->data, visited, stack);
-        }
-        mainNode = mainNode->next;
-    }
-
-    stackPush(stack, startVertex);
-    
-    return;
-}
-
 
 int main() {
     printf("Hello! Here You Can Perform Following Directed Graph Operation!\n");
@@ -270,7 +251,7 @@ int main() {
     int choice, choice2;
 
     while (1) {
-        printf("\n1. Breadth First Search\n2. Depth First Search\n3. Find All Path's\n4. Is Cycle Exists\n5. Topological Sort\n6. Exit\nEnter Your Choice:- ");
+        printf("\n1. Breadth First Search\n2. Depth First Search\n3. Find All Path's\n4. Is Cycle Exists\n5. Exit\nEnter Your Choice:- ");
         scanf("%d", &choice);
 
         switch (choice) {
@@ -332,32 +313,7 @@ int main() {
 
             break;
         }  
-        case 5: {
-            if (isCyclic(graph)) {
-                printf("Cycle Exists! Can't Perform Topological Sort\n");
-                break;
-            }
-
-            int *visited = (int *) malloc(graph->vertex * sizeof(int));
-            int *stack = (int *) malloc(graph->vertex * sizeof(int));
-            
-            printf("\n");
-            pointer = 0;
-            for (int i = 0; i < graph->vertex; i++) {
-                if (!visited[i]) {
-                    topologicalSort(graph, i, visited, stack);
-                }
-            }
-
-            for (int i = graph->vertex - 1; i >= 0; i--) {
-                printf("%d ", stack[i]);
-            }
-            
-            free(visited);
-            free(stack);
-            break;
-        }
-        case 6:
+        case 5:
             printf("Thanks For Using! Have a Great Day!");
             free(graph);
             return 0;
