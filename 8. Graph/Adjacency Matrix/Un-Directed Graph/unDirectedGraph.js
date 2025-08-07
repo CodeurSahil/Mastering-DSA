@@ -63,7 +63,8 @@ function dfsTraversal(graph, startVertex, visited, vertex, printArr) {
     return;
 }
 
-function findAllPaths(graph, path, startVertex, endVertex, vertex) {
+function findAllPaths(graph, path, startVertex, endVertex, vertex, visited) {
+    visited[startVertex] = true;
     path.push(startVertex);
 
     if (startVertex == endVertex) {
@@ -76,7 +77,11 @@ function findAllPaths(graph, path, startVertex, endVertex, vertex) {
         let value = graph[startVertex][neighbour];
 
         if (value == 1) {
-            findAllPaths(graph, path, neighbour, endVertex, vertex);
+            if (!visited[neighbour]) {
+                visited[neighbour] = true;
+                findAllPaths(graph, path, neighbour, endVertex, vertex, visited);
+                visited[neighbour] = false;
+            }
         }
     }
 
@@ -85,21 +90,20 @@ function findAllPaths(graph, path, startVertex, endVertex, vertex) {
     return;
 }
 
-function isCycleExistsUtils(graph, startVertex, visited, recursion, vertex) {
+function isCycleExistsUtils(graph, startVertex, visited, parent, vertex) {
     visited[startVertex] = true;
-    recursion[startVertex] = true;
 
     for (let neighbour = 0; neighbour < vertex; neighbour++) {
         let value = graph[startVertex][neighbour];
 
-        if (value == 1 && recursion[neighbour]) {
-            return true;
-        } else if (value == 1 && !visited[neighbour] && isCycleExistsUtils(graph, neighbour, visited, recursion, vertex)) {
+        if (value == 1 && !visited[neighbour]) {
+            if (isCycleExistsUtils(graph, neighbour, visited, startVertex, vertex)) {
+                return true;
+            }
+        } else if (value == 1 && neighbour != parent) {
             return true;
         }
     }
-
-    recursion[startVertex] = false;
 
     return false;
 }
@@ -109,34 +113,15 @@ function isCycleExists(graph, vertex) {
     let visited = Array.from({ length: vertex }, () => false);
 
     for (let i = 0; i < vertex; i++) {
-        let recursion = Array.from({ length: vertex }, () => false);
-        if (isCycleExistsUtils(graph, i, visited, recursion, vertex)) {
-            cycleExists = true;
-            break;
+        if (!visited[i]) {
+            if (isCycleExistsUtils(graph, i, visited, -1, vertex)) {
+                cycleExists = true;
+                break;
+            }
         }
     }
 
     return cycleExists;
-}
-
-function topologicalSort(graph, startVertex, visited, stack, vertex) {
-    if (visited[startVertex]) {
-        return;
-    }
-
-    visited[startVertex] = true;
-
-    for (let neighbour = 0; neighbour < vertex; neighbour++) {
-        let value = graph[startVertex][neighbour];
-
-        if (value == 1 && !visited[neighbour]) {
-            topologicalSort(graph, neighbour, visited, stack, vertex);
-        }
-    }
-
-    stack.push(startVertex);
-
-    return;
 }
 
 (() => {
@@ -171,10 +156,11 @@ function topologicalSort(graph, startVertex, visited, stack, vertex) {
         }
 
         addEdge(graph, src, dest);
+        addEdge(graph, dest, src);
     }
 
     while (true) {
-        console.log("\n1. Breadth First Search\n2. Depth First Search\n3. Find All Path's\n4. Is Cycle Exists\n5. Topological Sort\n6. Exit");
+        console.log("\n1. Breadth First Search\n2. Depth First Search\n3. Find All Path's\n4. Is Cycle Exists\n5. Exit");
         choice = Number.parseInt(prompt("Enter Your Choice:- "));
 
         switch (choice) {
@@ -212,6 +198,7 @@ function topologicalSort(graph, startVertex, visited, stack, vertex) {
 
             case 3:
                 let path = [];
+                var visited = Array.from({ length: vertex }, () => false);
 
                 console.log();
 
@@ -220,7 +207,7 @@ function topologicalSort(graph, startVertex, visited, stack, vertex) {
 
                 console.log("\nPaths: ");
 
-                findAllPaths(graph, path, startVertex, endVertex, vertex);
+                findAllPaths(graph, path, startVertex, endVertex, vertex, visited);
 
                 continue;
 
@@ -234,28 +221,6 @@ function topologicalSort(graph, startVertex, visited, stack, vertex) {
                 break;
 
             case 5:
-                if (isCycleExists(graph, vertex)) {
-                    console.log("\nCycle Exists! Can't Perform Topological Sort\n");
-                    continue;
-                }
-
-                console.log();
-
-                var visited = Array.from({ length: vertex }, () => false);
-                let stack = [];
-
-                for (let i = 0; i < vertex; i++) {
-                    if (!visited[i]) {
-                        topologicalSort(graph, i, visited, stack, vertex);
-                    }
-                }
-
-                stack = stack.reverse();
-                console.log(stack.join(" -> "));
-
-                continue;
-
-            case 6:
                 console.log("Thanks For Using! Have a Great Day!");
                 return;
             default:
