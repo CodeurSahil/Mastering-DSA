@@ -1,119 +1,120 @@
-# Doubly Linked List (DLL)
-**A Doubly Linked List (DLL)** is a type of linked list in which each node contains three parts:
-1. Data: The actual information stored in the node.
-1. Prev: A pointer/reference to the previous node.
-1. Next: A pointer/reference to the next node.
+## Doubly Linked List: The Two-Way Street ↔️
 
-This structure allows traversal in both directions (forward and backward), making it more flexible than a singly linked list.
+A **Doubly Linked List (DLL)** is an advanced version of a linked list that allows for traversal in both forward and backward directions. This is possible because each **node** in the list contains three essential parts:
+
+1.  **Data**: The information or value stored in the node.
+2.  **Next Pointer**: A reference pointing to the **next** node in the sequence.
+3.  **Previous Pointer (Prev)**: A reference pointing to the **previous** node in the sequence.
+
+The list is typically managed using two pointers: a `head` pointing to the first node (whose `prev` is `NULL`) and a `tail` pointing to the last node (whose `next` is `NULL`). This two-way structure makes a DLL more flexible and powerful than its singly linked counterpart.
+
+***Note: Understand Flow via Code in `doublyLinkedList.c`***
+
+---
 
 Representation of DLL:
     ![Repesentaion of Linked List](/assets/representationOfDoublyLinkedList.png)
-- Head(A): Points to the first node of the list, where Prev is null.
-- Tail(D): Points to the last node of the list, where Next is null.
 
-## Features of DLL
-1. Bidirectional Traversal:
-    - Can traverse the list both forwards and backwards.
-1. Dynamic Size:
-    - Can grow or shrink dynamically without the need for resizing.
-1. More Memory:
-    - Requires extra memory for the Prev pointer.
+---
 
-## Basic Operations on DLL
-1. **Traversal**
+## Core Operations & Algorithms
 
-    1. Forward Traversal:
-        - Start at the head.
-        - Visit the current node.
-        - Move to the next node using the Next pointer.
-        - Stop when Next is null.
+Managing a DLL involves careful manipulation of both `next` and `prev` pointers.
 
-    1. Backward Traversal:
-        - Start at the tail.
-        - Visit the current node.
-        - Move to the previous node using the Prev pointer.
-        - Stop when Prev is null.
-        
-        Complexity: 𝑂(𝑛)
+* **Traversal**
+    * **Goal:** To visit the nodes in sequence.
+    * **Forward Algorithm:** Start at the `head` and follow the `next` pointers until you reach `NULL`.
+    * **Backward Algorithm:** Start at the `tail` and follow the `prev` pointers until you reach `NULL`.
+    * **Complexity:** `$O(n)$` for a full traversal.
 
-2. **Insertion**
+* **Insertion**
+    * **Goal:** To add a new node.
+    * **Algorithm (At the Beginning):**
+        1.  Create a `newNode`.
+        2.  Set `newNode.next` to the current `head`.
+        3.  If the list isn't empty, set the current `head.prev` to `newNode`.
+        4.  Update `head` to be `newNode`.
+    * **Algorithm (At the End):**
+        1.  Create a `newNode`.
+        2.  Set `newNode.prev` to the current `tail`.
+        3.  If the list isn't empty, set the current `tail.next` to `newNode`.
+        4.  Update `tail` to be `newNode`.
+        *This is `$O(1)` because of the `tail` pointer.*
 
-    Insertion can happen in several ways:
+* **Deletion**
+    * **Goal:** To remove a node.
+    * **Algorithm (From the Beginning):**
+        1.  Update `head` to point to `head.next`.
+        2.  If the new `head` exists, set its `prev` pointer to `NULL`.
+        3.  Free the memory of the original head node.
+    * **Algorithm (From the End):**
+        1.  Update `tail` to point to `tail.prev`.
+        2.  If the new `tail` exists, set its `next` pointer to `NULL`.
+        3.  Free the memory of the original tail node.
 
-    1. At the Beginning:
-        - Create a new node.
-        - Set its Next to the current head.
-        - Update the Prev of the current head to the new node.
-        - Update head to the new node.
+* **Search**
+    * **Goal:** To find a node with a specific value.
+    * **Algorithm:** Traverse the list from the `head` (or `tail`) and compare the data at each node with the target value.
+    * **Complexity:** `$O(n)$`
 
-        Complexity: 𝑂(1)
+---
 
-    1. At the End:
-        - Create a new node.
-        - Set its Prev to the current tail.
-        - Update the Next of the current tail to the new node.
-        - Update tail to the new node.
+## Key Properties
 
-        Complexity: 𝑂(1)
+* **Bidirectional:** Nodes can be traversed both forwards (using `next`) and backwards (using `prev`).
+* **Complex Nodes:** Each node holds data and two pointers, increasing its size.
+* **Dynamic Size:** The list can grow and shrink at runtime without needing to be resized.
+* **Efficient End Operations:** Maintaining `head` and `tail` pointers allows for `$O(1)` insertions and deletions at both ends.
 
-    1. At a Specific Position:
-        - Traverse to the desired position.
-        - Update the Prev and Next pointers of adjacent nodes to include the new node.
+---
 
-        Complexity: 𝑂(𝑛)
+## Advantages 👍
 
-3. **Deletion**
+* **Flexible Traversal:** The ability to move in both directions makes many algorithms simpler and more efficient.
+* **Efficient Deletion:** If you have a pointer to a specific node, you can delete it in `$O(1)` time. This is a major advantage over a Singly Linked List, where you would first need to find the previous node (`$O(n)`).
+* **Efficient End Operations:** Adding or removing from the tail is just as fast as at the head (`$O(1)`).
 
-    Deletion can happen in several ways:
-    1. From the Beginning:
-        - Update the head to point to head.Next.
-        - Set Prev of the new head to null.
+---
 
-        Complexity: 𝑂(1)
+## Disadvantages 👎
 
-    1. From the End:
-        - Update the tail to point to tail.Prev.
-        - Set Next of the new tail to null.
+* **Higher Memory Usage:** Each node requires extra memory for the `prev` pointer, making a DLL larger than an SLL with the same data.
+* **More Complex Implementation:** Insertions and deletions are more complex because four pointers need to be updated (the `next` and `prev` of the adjacent nodes), which increases the risk of programming errors.
 
-        Complexity: 𝑂(1)
+---
 
-    1. From a Specific Position:
-        - Traverse to the node to be deleted.
-        - Update the Prev and Next pointers of adjacent nodes to bypass the node.
+## Applications
 
-        Complexity: 𝑂(𝑛)
+The bidirectional nature of DLLs makes them perfect for a variety of applications:
+* **Navigation Systems:** Used to implement the "back" and "forward" functionality in web browsers.
+* **Undo/Redo Features:** Software like text editors and photo editors use DLLs to keep a history of user actions, allowing for easy undoing and redoing.
+* **Implementing Deques:** A double-ended queue, which supports adding and removing elements from both ends, is a natural fit for a DLL.
+* **Music and Video Playlists:** Enabling "previous track" and "next track" features.
 
-4. **Search**
+---
 
-    Search for a specific value by traversing the list and comparing each node's data.
+## Time Complexity Summary ⏱️
 
-    Complexity: 𝑂(𝑛)
+| Operation | Best Case | Worst Case | Explanation |
+| :--- | :--- | :--- | :--- |
+| **Access (by position)** | `$O(1)` | `$O(n)` | `$O(1)` for head/tail, `$O(n)` for others. |
+| **Search (by value)** | `$O(1)` | `$O(n)` | `$O(1)` if near an end, `$O(n)` if in the middle or absent. |
+| **Insertion (Beginning/End)** | `$O(1)` | `$O(1)` | Always a constant time operation. |
+| **Insertion (Middle)** | `$O(n)` | `$O(n)` | Requires traversal to find the position first. |
+| **Deletion (Beginning/End)** | `$O(1)` | `$O(1)` | Always a constant time operation. |
+| **Deletion (Middle)** | `$O(n)` | `$O(n)` | Requires traversal. However, if a pointer to the node is given, it is `$O(1)$`. |
 
-5. **Reverse**
+---
 
-    Reverse the direction of traversal by swapping the Prev and Next pointers for all nodes.
+## Important Additional Information
 
-    Algorithm:
-    - Start with the head.
-    - For each node, swap Prev and Next.
-    - Update head to the last node after reversal.
+### The Key Advantage: O(1) Deletion with a Given Node
 
-        Complexity: 𝑂(𝑛)
+The most significant advantage of a DLL over an SLL is the ability to delete any node in constant time if you already have a pointer to it.
 
-## Advantages of Doubly Linked List
-1. Bidirectional Traversal: Can move both forward and backward in the list.
-1. Efficient Deletions:
-    - Can delete a node in 𝑂(1)if the pointer to the node is given.
-1. Dynamic Size: Can grow or shrink dynamically.
+* **In a Singly Linked List (SLL):** If you are given a pointer `node_to_delete`, you can't delete it immediately. You first have to traverse from the `head` to find the node *before* it to update its `next` pointer. This takes `$O(n)` time.
+* **In a Doubly Linked List (DLL):** If you are given `node_to_delete`, you can find its neighbors instantly:
+    * The previous node is `node_to_delete.prev`.
+    * The next node is `node_to_delete.next`.
 
-## Disadvantages of Doubly Linked List
-1. More Memory: Each node requires extra memory for the Prev pointer.
-1. Complex Implementation: More pointers to manage during insertion and deletion.
-
-## Applications of Doubly Linked List
-1. Navigation Systems:
-    - Forward and backward navigation in browsers or playlists.
-1. Undo/Redo Functionality:
-    - Maintaining a history of actions in software.
-1. Deque Implementation:
-    - Efficient double-ended queues.
+    You can then update their pointers to bypass the current node (`prev_node.next = next_node` and `next_node.prev = prev_node`) all in `$O(1)` time. This efficiency is critical in many advanced algorithms and data structures.
