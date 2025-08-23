@@ -1,22 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Define the size of the hash table.
 #define TABLE_SIZE 10
 
+// Define the structure for a node in the hash table.
+// Each node stores a key-value pair and a pointer to the next node in case of collisions.
 typedef struct Node {
     int key;
     int value;
-    struct Node * next;
+    struct Node* next;
 } Node;
 
-Node * hashTable[TABLE_SIZE];
+// The hash table is an array of Node pointers. Each element can be the head of a linked list.
+Node* hashTable[TABLE_SIZE];
 
-// Hash function
+/**
+ * @brief A simple hash function that maps a key to an index in the hash table.
+ * @param key The key to be hashed.
+ * @return The calculated index in the hash table.
+ */
 int hashFunction(int key) {
     return key % TABLE_SIZE;
 }
 
-// Insert a key-value pair
+/**
+ * @brief Inserts a key-value pair into the hash table.
+ * Handles collisions using chaining (linked lists).
+ */
 void insert() {
     int value, key;
     printf("\nEnter Key: ");
@@ -30,37 +41,38 @@ void insert() {
     printf("Enter Value: ");
     scanf("%d", &value);
 
+    // Calculate the index for the key.
     int index = hashFunction(key);
     Node* temp = hashTable[index];
 
-    // Check if the key already exists and update its value
+    // Traverse the linked list at the calculated index to check for duplicate keys.
     while (temp) {
         if (temp->key == key) {
             int choice;
-            printf("\nDuplicate Key Already Exist!\n1. Update\n2. Skip\nEnter Choice:- ");
+            printf("\nDuplicate Key Already Exists!\n1. Update\n2. Skip\nEnter Choice:- ");
             scanf("%d", &choice);
             if (choice == 1) {
-                temp->value = value; // Update existing key"s value
+                temp->value = value; // Update the value of the existing key.
                 printf("\nUpdation Successfull!\n");
             }
-            return;
+            return; // Exit the function whether updated or skipped.
         }
         temp = temp->next;
     }
 
-    // If key doesn"t exist, insert a new node
+    // If the key doesn't exist, create and insert a new node at the beginning of the list.
     Node* newNode = (Node*)malloc(sizeof(Node));
-
     newNode->key = key;
     newNode->value = value;
-    newNode->next = hashTable[index]; // Insert at head
-
-    hashTable[index] = newNode;
+    newNode->next = hashTable[index]; // The new node points to the old head.
+    hashTable[index] = newNode;       // The new node becomes the new head.
 
     printf("\nInsertion Successfull!\n");
 }
 
-// Search for a key
+/**
+ * @brief Searches for a key in the hash table and prints its value if found.
+ */
 void search() {
     int key, val = 0;
     printf("\nEnter Key: ");
@@ -68,27 +80,32 @@ void search() {
 
     if (key < 1) {
         printf("\nInvalid Key!");
+        return;
     }
 
+    // Calculate the index for the key.
     int index = hashFunction(key);
-
     Node* temp = hashTable[index];
 
+    // Traverse the linked list at the index.
     while (temp) {
-        if (temp->key == key)
-            val = temp->value;
+        if (temp->key == key) {
+            val = temp->value; // Key found, store its value.
+            break; // Exit the loop once the key is found.
+        }
         temp = temp->next;
     }
+
     if (val) {
         printf("Value:- %d\n", val);
     } else {
         printf("\n~~Key Not Found~~\n");
     }
-
-    return;
 }
 
-// Delete a key
+/**
+ * @brief Deletes a key-value pair from the hash table.
+ */
 void delete() {
     int key;
     printf("\nEnter Key: ");
@@ -96,40 +113,48 @@ void delete() {
 
     if (key < 1) {
         printf("\nInvalid Key!");
+        return;
     }
 
+    // Calculate the index for the key.
     int index = hashFunction(key);
-
     Node* temp = hashTable[index];
-
     Node* prev = NULL;
 
+    // Traverse the list to find the node with the matching key.
     while (temp && temp->key != key) {
         prev = temp;
         temp = temp->next;
     }
 
+    // If temp is NULL, the key was not found in the list.
     if (!temp) {
         printf("\n~~Key Not Found~~\n");
         return;
-    }; // Key not found
+    }
 
-    if (!prev)
-        hashTable[index] = temp->next; // Remove head
-    else
+    // Case 1: The node to be deleted is the head of the list.
+    if (!prev) {
+        hashTable[index] = temp->next;
+    } 
+    // Case 2: The node is in the middle or at the end of the list.
+    else {
         prev->next = temp->next;
+    }
 
     printf("Deletion Successfull!\n");
-
-    free(temp);
+    free(temp); // Free the memory of the deleted node.
 }
 
-// Display hash table
+/**
+ * @brief Displays the entire hash table, including all linked lists.
+ */
 void display() {
     printf("\n");
     for (int i = 0; i < TABLE_SIZE; i++) {
         printf("Index %d: ", i);
         Node* temp = hashTable[i];
+        // Traverse and print each node in the linked list at the current index.
         while (temp) {
             printf("(%d, %d) -> ", temp->key, temp->value);
             temp = temp->next;
@@ -138,6 +163,9 @@ void display() {
     }
 }
 
+/**
+ * @brief The main function that drives the program.
+ */
 int main() {
     int choice;
 
@@ -160,6 +188,7 @@ int main() {
             search();
             break;
         case 5:
+            // Note: A complete program should free all allocated nodes before exiting.
             printf("\n~~Thanks for using! Have a great day!~~");
             return 0;
         default:

@@ -1,33 +1,45 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h> // For using the 'true' keyword
 
+// Define the size of the hash table and a value to represent an empty slot.
 #define TABLE_SIZE 10
 #define EMPTY -1
 
-int * keyHash, * valueHash;
+// Use two parallel arrays to store keys and values.
+int *keyHash, *valueHash;
 
+/**
+ * @brief Allocates memory for the hash table arrays and initializes them.
+ */
 void initiateHash() {
-    keyHash = (int *)realloc(keyHash, TABLE_SIZE * sizeof(int));
-    valueHash = (int *)realloc(valueHash, TABLE_SIZE * sizeof(int));
+    // Allocate memory for the key and value arrays.
+    keyHash = (int*)malloc(TABLE_SIZE * sizeof(int));
+    valueHash = (int*)malloc(TABLE_SIZE * sizeof(int));
     if (keyHash == NULL || valueHash == NULL) {
         printf("Memory allocation failed.\n");
-        exit(1); // Exit the program on allocation failure
+        exit(1); // Exit the program on allocation failure.
     }
 
+    // Initialize all slots in the hash table to EMPTY.
     for (int i = 0; i < TABLE_SIZE; i++) {
-        keyHash[i] = -1;
-        valueHash[i] = -1;
+        keyHash[i] = EMPTY;
+        valueHash[i] = EMPTY;
     }
-
-    return;
 }
 
-// Hash function
+/**
+ * @brief A simple hash function that maps a key to an initial index.
+ * @param key The key to be hashed.
+ * @return The calculated index.
+ */
 int hashFunction(int key) {
     return key % TABLE_SIZE;
 }
 
-// Insert a key-value pair
+/**
+ * @brief Inserts a key-value pair using linear probing for collision resolution.
+ */
 void insert() {
     int value, key;
     printf("\nEnter Key: ");
@@ -44,125 +56,128 @@ void insert() {
     int index = hashFunction(key);
     int originalIndex = index;
 
-    while (true) {
+    // First, probe to see if the key already exists to update it.
+    while (keyHash[index] != EMPTY) {
         if (keyHash[index] == key) {
             int choice;
-            printf("\nDuplicate Key Already Exist!\n1. Update\n2. Skip\nEnter Choice:- ");
+            printf("\nDuplicate Key Already Exists!\n1. Update\n2. Skip\nEnter Choice:- ");
             scanf("%d", &choice);
             if (choice == 1) {
-                valueHash[index] = value; // Update existing key"s value
+                valueHash[index] = value; // Update existing key's value.
                 printf("\nUpdation Successfull!\n");
             }
             return;
         }
-        index = (index + 1) % TABLE_SIZE;
-        if (index == originalIndex)
-            break;
+        index = (index + 1) % TABLE_SIZE; // Move to the next slot (wrap around if needed).
+        if (index == originalIndex) break; // Stop if we've checked the whole table.
     }
 
+    // If the key doesn't exist, find the next empty slot to insert.
+    index = originalIndex; // Reset index to start probing for an empty slot.
     while (keyHash[index] != EMPTY) {
-        index = (index + 1) % TABLE_SIZE;
+        index = (index + 1) % TABLE_SIZE; // Move to the next slot.
+        // If we circle back to the start, the table is full.
         if (index == originalIndex) {
             printf("\nHash table is full!\n");
             return;
         }
     }
 
+    // Insert the key and value at the found empty slot.
     keyHash[index] = key;
     valueHash[index] = value;
 
     printf("\nInsertion Successfull!\n");
 }
 
-// Search for a key
+/**
+ * @brief Searches for a key using linear probing and prints its value.
+ */
 void search() {
-    int key, val = 0;
+    int key;
     printf("\nEnter Key: ");
     scanf("%d", &key);
 
     if (key < 1) {
         printf("\nInvalid Key!");
-    }
-
-    int index = hashFunction(key);
-    int originalIndex = index;
-
-    while (true) {
-        if (keyHash[index] == key) {
-            val = valueHash[index];
-            break;
-        }
-        index = (index + 1) % TABLE_SIZE;
-        if (index == originalIndex)
-            break;
-    }
-
-    if (val) {
-        printf("Value:- %d\n", val);
-    } else {
-        printf("\n~~Key Not Found~~\n");
-    }
-
-    return;
-}
-
-// Delete a key
-void delete() {
-    int key, val = 0;
-    printf("\nEnter Key: ");
-    scanf("%d", &key);
-
-    if (key < 1) {
-        printf("\nInvalid Key!");
-    }
-
-    int index = hashFunction(key);
-    int originalIndex = index;
-
-    while (true) {
-        if (keyHash[index] == key) {
-            val = valueHash[index];
-            break;
-        }
-        index = (index + 1) % TABLE_SIZE;
-        if (index == originalIndex) {
-            break;;
-        }
-    }
-
-    if (!val) {
-        printf("\n~~Key Not Found~~\n");
         return;
-    }; // Key not found
+    }
 
-    keyHash[index] = -1;
-    valueHash[index] = -1;
+    int index = hashFunction(key);
+    int originalIndex = index;
 
-    printf("Deletion Successfull!\n");
+    // Probe through the table to find the key.
+    while (keyHash[index] != EMPTY) {
+        if (keyHash[index] == key) {
+            printf("Value:- %d\n", valueHash[index]);
+            return; // Key found, print value and exit.
+        }
+        index = (index + 1) % TABLE_SIZE; // Move to the next slot.
+        if (index == originalIndex) break; // Stop if we've checked the whole table.
+    }
+
+    // If the loop finishes without finding the key.
+    printf("\n~~Key Not Found~~\n");
 }
 
-// Display hash table
-void display() {
-    printf("\n");
-    for (int i = 0; i < TABLE_SIZE; i++) {
-        if(keyHash[i] != EMPTY) {
-            printf("(%d, %d)", keyHash[i], valueHash[i]);
-        } else {
-            printf("NULL");
-        }
+/**
+ * @brief Deletes a key-value pair using linear probing.
+ * Note: This simple deletion can disrupt future searches in a probing sequence.
+ * A more robust implementation might use a special marker for deleted slots.
+ */
+void delete() {
+    int key;
+    printf("\nEnter Key: ");
+    scanf("%d", &key);
 
-        if (i != TABLE_SIZE - 1) {
-            printf(" , ");
+    if (key < 1) {
+        printf("\nInvalid Key!");
+        return;
+    }
+
+    int index = hashFunction(key);
+    int originalIndex = index;
+
+    // Probe to find the key.
+    while (keyHash[index] != EMPTY) {
+        if (keyHash[index] == key) {
+            keyHash[index] = EMPTY;   // Mark the slot as empty.
+            valueHash[index] = EMPTY;
+            printf("Deletion Successfull!\n");
+            return; // Key found and deleted, exit.
+        }
+        index = (index + 1) % TABLE_SIZE; // Move to the next slot.
+        if (index == originalIndex) break; // Stop if we've checked the whole table.
+    }
+
+    // If the loop finishes, the key was not found.
+    printf("\n~~Key Not Found~~\n");
+}
+
+/**
+ * @brief Displays the contents of the hash table.
+ */
+void display() {
+    printf("\nIndex | Key | Value\n");
+    printf("-------------------\n");
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (keyHash[i] != EMPTY) {
+            printf("%-5d | %-3d | %d\n", i, keyHash[i], valueHash[i]);
+        } else {
+            printf("%-5d | EMPTY\n", i);
         }
     }
     printf("\n");
 }
 
+/**
+ * @brief The main function that drives the program.
+ */
 int main() {
+    // Initialize the hash table arrays.
     initiateHash();
 
     int choice;
-
     printf("Hello! Here You Can Perform Following Hash Table/Maps Operations!\n");
     while (1) {
         printf("\n1. Show Data\n2. Insert\n3. Delete With Key\n4. Check Value at a Key\n5. Exit\nEnter Your Choice: ");
@@ -182,6 +197,8 @@ int main() {
             search();
             break;
         case 5:
+            free(keyHash);   // Free the allocated memory.
+            free(valueHash);
             printf("\n~~Thanks for using! Have a great day!~~");
             return 0;
         default:
