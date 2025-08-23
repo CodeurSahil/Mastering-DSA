@@ -1,112 +1,90 @@
-# Implementation of Queue Using Stack (Costly Enqueue)
+## Queue from Stacks: The Costly Enqueue Method
 
-This approach simulates a **queue** using two **stacks**, where the **enqueue operation** is made **costly** to ensure the **FIFO (First In, First Out)** behavior of a queue.
+This is a specific algorithm for simulating a **FIFO (First-In, First-Out)** queue using two **LIFO (Last-In, First-Out)** stacks. The core idea is to make the **`enqueue` operation do all the hard work** of maintaining the correct FIFO order. This ensures that the oldest element is always at the top of the main stack, making the `dequeue` operation trivial and fast.
 
----
+Think of it like adding a new book to the *bottom* of an existing stack. You must first take all the books off, place the new one down, and then carefully place all the old books back on top in their original order.
 
-## Key Components
-
-1. **Two Stacks**:
-   - `stack1`: Used for temporary storage during enqueue operations.
-   - `stack2`: Maintains the elements in the correct order for dequeuing.
-
-2. **Stack Properties**:
-   - **Push**: Adds an element to the top of the stack.
-   - **Pop**: Removes and returns the top element.
+***Note: Understand Flow via Code in `simpleQueue.c`***
 
 ---
 
-## Steps for Operations
+## How It Works: The Logic
 
-### **1. Enqueue (Costly)**
+This method uses two stacks, which we'll call `main_stack` and `temp_stack`, to manage the process.
 
-When adding a new element to the queue, we ensure that the order in `stack2` is maintained so that the oldest element is always at the top.
+* **`main_stack`:** This stack holds the final, correctly ordered queue elements. The element at the top is always the oldest one (the front of the queue).
+* **`temp_stack`:** This is a helper stack used only during the `enqueue` process to temporarily hold elements.
 
-#### Steps:
-1. Pop all elements from `stack2` and push them into `stack1`.
-2. Push the new element into `stack2`.
-3. Transfer all elements back from `stack1` to `stack2`.
+Let's walk through an example. Imagine `main_stack` holds `[C, B, A]` from top to bottom. This represents a queue where `C` was added first.
 
-This ensures that the oldest element is at the top of `stack2`.
+**To `enqueue` a new element `D`:**
+1.  **Transfer:** All elements (`C`, `B`, `A`) are popped from `main_stack` and pushed onto `temp_stack`. `temp_stack` now holds `[A, B, C]`.
+2.  **Insert:** The new element `D` is pushed onto the now-empty `main_stack`. `main_stack` is now `[D]`.
+3.  **Return:** All elements are popped from `temp_stack` and pushed back onto `main_stack`. `main_stack` now holds `[C, B, A, D]`.
 
-#### Time Complexity:
-- **Enqueue**: \( O(n) \), where \( n \) is the number of elements in the queue.
-
----
-
-### **2. Dequeue (Efficient)**
-
-Simply remove the top element from `stack2`, as it already maintains the correct FIFO order.
-
-#### Steps:
-1. If `stack2` is empty, the queue is underflowed.
-2. Otherwise, pop and return the top element of `stack2`.
-
-#### Time Complexity:
-- **Dequeue**: \( O(1) \)
+The order is preserved, with the oldest element `C` still at the top, ready to be dequeued.
 
 ---
 
-### **3. Peek (Front)**
+## Operations and Algorithms
 
-Returns the element at the front of the queue without removing it. The front element is always at the top of `stack2`.
+The complexity is concentrated entirely within the `enqueue` operation.
 
-#### Steps:
-1. If `stack2` is empty, the queue is underflowed.
-2. Otherwise, return the top element of `stack2`.
+* **Enqueue(value)**
+    * **Goal:** Add a new element to the rear of the queue.
+    * **Algorithm:**
+        1.  While `main_stack` is not empty, pop each element and push it onto `temp_stack`.
+        2.  Push the new `value` onto `main_stack`.
+        3.  While `temp_stack` is not empty, pop each element and push it back onto `main_stack`.
 
-#### Time Complexity:
-- **Peek**: \( O(1) \)
+* **Dequeue()**
+    * **Goal:** Remove the element from the front of the queue.
+    * **Algorithm:**
+        1.  Check if `main_stack` is empty. If so, throw a **Queue Underflow** error.
+        2.  Pop and return the element from `main_stack`.
 
----
-
-### **4. IsEmpty**
-
-Checks whether the queue is empty by verifying if `stack2` is empty.
-
-#### Steps:
-1. If `stack2` is empty, return `true`.
-2. Otherwise, return `false`.
-
-#### Time Complexity:
-- **IsEmpty**: \( O(1) \)
+* **Peek()** and **IsEmpty()**
+    * `Peek()` returns the top element of `main_stack` without removing it.
+    * `IsEmpty()` returns `true` if `main_stack` is empty.
 
 ---
 
-## Advantages
+## Key Properties
 
-1. **FIFO Behavior**:
-   - The costly enqueue operation ensures that the dequeue operation is efficient and follows the FIFO principle.
-2. **Dynamic Size**:
-   - Memory usage grows dynamically with the number of elements.
+* **FIFO Behavior:** Successfully simulates the FIFO principle.
+* **Order Maintenance:** The `main_stack` is always kept in a state where the top element is the oldest.
+* **Expensive Insertion:** The defining property is that all the complex logic and performance cost is in the `enqueue` operation.
 
 ---
 
-## Disadvantages
+## Advantages 👍
 
-1. **Costly Enqueue**:
-   - Enqueue operation requires transferring all elements between the two stacks, making it inefficient for frequent insertions.
-2. **Memory Overhead**:
-   - Two stacks are required, doubling the memory usage compared to a standard queue.
+* **Fast Dequeue and Peek:** The primary benefit is that `dequeue` and `peek` are guaranteed to be single-step, constant time (`$O(1)`) operations.
+
+---
+
+## Disadvantages 👎
+
+* **Very Slow Enqueue:** The `$O(n)` complexity of the `enqueue` operation, which requires moving every single element twice, makes this method highly inefficient and impractical for most use cases.
+* **High Memory Churn:** Constantly transferring all data between stacks for every insertion is computationally expensive.
+* **Memory Overhead:** Requires space for two stacks instead of one.
 
 ---
 
 ## Applications
 
-1. **Algorithm Demonstrations**:
-   - Useful for teaching stack-to-queue transformations.
-2. **Limited Use Cases**:
-   - Suitable for scenarios where enqueue operations are infrequent compared to dequeues.
+This algorithm is almost exclusively an **educational tool**.
+
+* **Technical Interviews:** Used to test a candidate's ability to manipulate data structures and analyze algorithmic trade-offs.
+* **Niche Scenarios:** Only theoretically suitable for a system where dequeues and peeks are extremely frequent and time-critical, while enqueues are exceptionally rare. In practice, other queue implementations are always preferred.
 
 ---
 
-## Summary
+## Time Complexity
 
-| Operation  | Time Complexity |
-|------------|-----------------|
-| Enqueue    | \( O(n) \)      |
-| Dequeue    | \( O(1) \)      |
-| Peek       | \( O(1) \)      |
-| IsEmpty    | \( O(1) \)      |
-
----
+| Operation | Complexity | Explanation                                 |
+| :-------- | :--------: | :------------------------------------------ |
+| **Enqueue** |   `$O(n)`  | Must move all `n` elements twice.           |
+| **Dequeue** |   `$O(1)`  | A single pop operation from the main stack. |
+| **Peek** |   `$O(1)`  | A single peek operation on the main stack.  |
+| **IsEmpty** |   `$O(1)`  | A single check on the main stack.         |

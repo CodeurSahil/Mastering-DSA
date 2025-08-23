@@ -1,75 +1,100 @@
-# Dynamic Stack with Array
-A **Dynamic Stack** is a variation of the stack where the size of the stack grows and shrinks dynamically during runtime, depending on the number of elements. It addresses the limitations of a fixed stack by using an array that resizes itself as needed.
+## Dynamic Array Stack: A Stack That Grows 🌿
 
-## Key Characteristics of a Dynamic Stack
-1. Dynamic Size:
-    - The stack automatically resizes (expands or shrinks) based on the number of elements.
-    - Eliminates stack overflow for practical purposes.
-1. Array-Based:
-    - Internally uses an array to store elements.
-1. Resizing Logic:
-    - Expand: When the stack is full, the array size is doubled.
-    - Shrink: Optionally, when the stack is underutilized (e.g., less than half full), the array size can be halved.
+A **Dynamic Array Stack** is a flexible implementation of the stack data structure that uses a resizable array as its underlying container. It solves the biggest problem of a fixed-size array stack—the dreaded **stack overflow**—by automatically growing or shrinking its capacity as needed.
 
-## Key Operations on a Dynamic Stack
-1. Push
-    - Adds an element to the top of the stack.
-    - If the stack is full, the array is resized to accommodate more elements.
-    - Algorithm:
-        1. Check if the stack is full (top == capacity - 1).
-        1. If full:
-        1. Increase the size of the array.
-        1. Increment the top pointer.
-        1. Insert the new element at the position top.
-    - Complexity: O(1): Most push operations run in constant time. Resizing happens infrequently.
+This means you get the speed benefits of array-based storage without the limitation of a predefined size. It's the standard approach used in many modern programming language libraries.
 
-2. Pop
-    - Removes the top element from the stack.
-    - Optionally, reduces the array size when the stack is significantly underutilized.
-    - Algorithm:
-        1. Check if the stack is empty (top == -1).
-        1. Retrieve the element at top.
-        1. Decrement the top pointer.
-        1. Optionally, shrink the array if the size is less than half the capacity.
-    - Complexity:
-        - O(1) for most operations.
-        - Occasional resizing makes it 𝑂(𝑛) in rare cases.
+***Note: Understand Flow via Code in `dynamicStack.c`***
 
-3. Peek
-    - Returns the top element without removing it.
-    - Complexity: 𝑂(1)
+---
 
-4. IsEmpty
-    - Checks if the stack is empty.
-    - Condition: top == -1
-    - Complexity: 𝑂(1)
+## How It Works: The Resizing Logic
 
-5. Size
-    - Returns the current number of elements in the stack.
-    - Complexity: 𝑂(1)
+The "magic" of a dynamic stack lies in its ability to resize. This process is triggered when the stack becomes full or too empty.
 
-# Applications of Dynamic Stack
-1. Dynamic Workloads:
-    - Applications with unpredictable or varying stack sizes.
-1. Memory-Constrained Environments:
-    - Allocates memory only as needed, optimizing usage.
-1. Recursive Algorithms:
-    - Can handle deep recursions without fixed size limitations.
-1. Expression Evaluation and Parsing:
-    - Suitable for complex mathematical or logical evaluations.
+* **Expansion (Growing)**
+    * **When does it happen?** When a `push` operation is attempted on an array that is already full.
+    * **What is the process?**
+        1.  A new, larger array is created (typically **double** the size of the old one).
+        2.  All elements from the old array are copied over to the new array.
+        3.  The old array is discarded, and the stack continues using the new, expanded array.
+    
 
-## Advantages of Dynamic Stack
-1. Dynamic Resizing:
-    - Automatically adjusts size, reducing memory waste and avoiding stack overflow.
-1. Efficient Memory Usage:
-    - Allocates memory only as needed.
-1. Amortized Efficiency:
-    - Most operations are 𝑂(1) due to infrequent resizing.
+* **Shrinking (Optional)**
+    * **When does it happen?** When a `pop` operation leaves the array significantly underutilized (e.g., less than 25% full).
+    * **What is the process?**
+        1.  A new, smaller array is created (typically **half** the size of the old one).
+        2.  The remaining elements are copied to the new, smaller array.
+    * **Why is it optional?** Shrinking reclaims unused memory but adds computational overhead. It's a trade-off between memory usage and performance.
 
-## Disadvantages of Dynamic Stack
-1. Resizing Overhead:
-    - Resizing involves copying elements, which is 𝑂(𝑛) and can cause a performance hit.
-1. Complex Implementation:
-    - Requires more logic compared to a fixed stack.
-1. Memory Fragmentation:
-    - Frequent resizing can lead to fragmentation in memory-intensive environments.
+---
+
+## Operations and Algorithms
+
+The core stack operations are the same, but `push` and `pop` include the resizing logic.
+
+* **Push(value)**
+    * **Algorithm:**
+        1.  Check if the array is full (`top == capacity - 1`).
+        2.  If it is full, trigger the **Expansion** logic.
+        3.  Increment `top`.
+        4.  Insert the `value` at the `top` index.
+
+* **Pop()**
+    * **Algorithm:**
+        1.  Check for stack underflow (if `top == -1`).
+        2.  Retrieve the element at the `top` index.
+        3.  Decrement `top`.
+        4.  Optionally, check if the shrinking condition is met (e.g., `size < capacity / 4`). If so, trigger the **Shrinking** logic.
+        5.  Return the retrieved element.
+
+* **Peek()**, **IsEmpty()**, and **Size()**
+    * These operations are identical to a fixed-array stack and have a complexity of `$O(1)`. They are not affected by resizing.
+
+---
+
+## Key Properties
+
+* **LIFO Principle:** It fundamentally follows the Last-In, First-Out rule.
+* **Dynamic Size:** Its capacity is not fixed and adapts to the number of elements.
+* **Contiguous Storage:** At any point in time, the elements are stored in a contiguous block of memory.
+* **Amortized Constant Time:** While some operations can be slow, the average time complexity for `push` and `pop` is constant.
+
+---
+
+## Advantages 👍
+
+* **Avoids Stack Overflow:** The ability to grow on demand makes it robust for workloads of any size.
+* **Efficient Memory Usage:** It avoids the need to pre-allocate a huge array, thus saving memory. It only uses what it needs (plus some extra capacity).
+* **Fast Average Performance:** The cost of resizing is spread out over many fast `$O(1)` operations, making it highly efficient on average.
+
+---
+
+## Disadvantages 👎
+
+* **Resizing Overhead:** The process of creating a new array and copying all elements is slow (`$O(n)`) and can cause a temporary performance lag.
+* **Unpredictable Latency:** A `push` operation is usually instantaneous, but the one that triggers a resize will be noticeably slower. This can be an issue in real-time systems.
+* **Slightly More Complex:** The implementation requires additional logic to handle the resizing process.
+
+---
+
+## Applications
+
+Because of its flexibility and efficiency, the dynamic array stack is the default choice for most general-purpose applications.
+* **General Programming:** Most standard library stack implementations in languages like Java, C++, and Python are dynamic.
+* **Recursive Algorithms:** Safely handles deep recursion where the required stack depth is unknown beforehand.
+* **Parsers and Compilers:** Used for parsing source code or evaluating complex expressions where the nesting level can vary greatly.
+* **Applications with Unpredictable Workloads:** Ideal for any scenario where the number of items to be stored is not known in advance.
+
+---
+
+## Time Complexity
+
+The concept of **amortized analysis** is crucial here. While a single operation can be slow, the average cost over a long sequence of operations is very low.
+
+| Operation       | Worst-Case Complexity | Amortized (Average) Complexity |
+| :-------------- | :-------------------: | :----------------------------: |
+| **Push** |        `$O(n)$`        |             `$O(1)`             |
+| **Pop** |        `$O(n)$`        |             `$O(1)`             |
+| **Peek / Top** |        `$O(1)$`        |             `$O(1)`             |
+| **IsEmpty / Size**|        `$O(1)$`        |             `$O(1)`             |

@@ -1,113 +1,98 @@
-# Implementation of Queue Using Stack (Costly Dequeue)
+## Queue from Stacks: The Costly Dequeue (Amortized) Method
 
-This approach simulates a **Queue** using two **stacks**, where the **dequeue operation** is made **costly** to ensure the **FIFO (First In, First Out)** behavior of a queue.
+This is the more common and generally more efficient algorithm for simulating a **FIFO (First-In, First-Out)** queue using two **LIFO (Last-In, First-Out)** stacks. The core idea is to make the `enqueue` operation extremely fast and to delay the work of re-ordering elements until a `dequeue` is actually requested.
 
----
+This approach is famous for its **amortized `$O(1)$`** dequeue time, making it a classic computer science problem and a favorite in technical interviews.
 
-## Key Components
-
-1. **Two Stacks**:
-   - `stack1`: Used for enqueue operations.
-   - `stack2`: Used for dequeue operations.
-
-2. **Stack Properties**:
-   - **Push**: Adds an element to the top of the stack.
-   - **Pop**: Removes and returns the top element.
+***Note: Understand Flow via Code in `simpleQueue.c`***
 
 ---
 
-## Steps for Operations
+## How It Works: The Logic and Amortized Analysis
 
-### **1. Enqueue (Efficient)**
+This method uses two stacks, often called `input_stack` and `output_stack`, to manage the queue.
 
-In this implementation, the enqueue operation is straightforward, as elements are simply pushed onto `stack1`.
+* **`input_stack`:** New elements are quickly pushed here. It acts as the "inbox," storing elements in reverse (LIFO) order.
+* **`output_stack`:** Elements are popped from here. It acts as the "outbox," storing elements in the correct FIFO order, ready for removal.
 
-#### Steps:
-1. Push the new element onto `stack1`.
+The key is that elements are only moved from `input_stack` to `output_stack` when the `output_stack` is empty.
 
-#### Time Complexity:
-- **Enqueue**: \( O(1) \)
+**Walkthrough Example:**
+1.  We `enqueue(A)`, `enqueue(B)`, and `enqueue(C)`. All are pushed to `input_stack`, which now holds `[C, B, A]` from top to bottom. `output_stack` is empty.
+2.  A `dequeue()` operation is called.
+3.  The algorithm checks `output_stack` and finds it's empty. Now, the **transfer** happens: all elements are popped from `input_stack` and pushed to `output_stack`.
+4.  `output_stack` now holds `[A, B, C]`, which is the correct FIFO order. `input_stack` is empty.
+5.  The top element, `A`, is popped from `output_stack` and returned.
+6.  Another `dequeue()` is called. This time, `output_stack` is **not empty**, so the expensive transfer step is skipped. `B` is popped and returned immediately. This is an `$O(1)` operation.
 
----
-
-### **2. Dequeue (Costly)**
-
-When removing an element from the queue, we ensure that the oldest element is returned. To achieve this, we use `stack2` to reverse the order of elements in `stack1`.
-
-#### Steps:
-1. If `stack2` is empty:
-   - Pop all elements from `stack1` and push them into `stack2`.
-   - This reverses the order, so the oldest element is at the top of `stack2`.
-2. If `stack2` is still empty after the transfer, the queue is underflowed.
-3. Otherwise, pop and return the top element of `stack2`.
-
-#### Time Complexity:
-- **Dequeue**: \( O(n) \), where \( n \) is the number of elements in the queue.
+**Amortized Analysis Explained**
+The slow `$O(n)` transfer operation only happens occasionally. After a transfer, the next `n-1` dequeues are all very fast `$O(1)` operations. The high cost of the one slow operation is "paid for" by the many fast ones. Over a long sequence of operations, the average cost of a dequeue is constant, or **amortized `$O(1)$`**.
 
 ---
 
-### **3. Peek (Front)**
+## Operations and Algorithms
 
-Returns the element at the front of the queue without removing it. The front element is always at the top of `stack2`.
+* **Enqueue(value)**
+    * **Goal:** Add a new element to the queue.
+    * **Algorithm:** Simply push the `value` onto `input_stack`.
 
-#### Steps:
-1. If `stack2` is empty:
-   - Pop all elements from `stack1` and push them into `stack2`.
-2. If `stack2` is still empty after the transfer, the queue is underflowed.
-3. Otherwise, return the top element of `stack2`.
+* **Dequeue()**
+    * **Goal:** Remove the oldest element from the queue.
+    * **Algorithm:**
+        1.  If `output_stack` is empty, transfer all elements from `input_stack` to `output_stack`.
+        2.  If `output_stack` is still empty (meaning the whole queue was empty), throw a **Queue Underflow** error.
+        3.  Pop and return the element from `output_stack`.
 
-#### Time Complexity:
-- **Peek**: \( O(n) \)
+* **Peek()**
+    * **Goal:** View the oldest element.
+    * **Algorithm:**
+        1.  Follows the same logic as `dequeue`: if `output_stack` is empty, transfer elements from `input_stack`.
+        2.  Return the top element of `output_stack` without popping it.
 
----
-
-### **4. IsEmpty**
-
-Checks whether the queue is empty by verifying if both `stack1` and `stack2` are empty.
-
-#### Steps:
-1. If both `stack1` and `stack2` are empty, return `true`.
-2. Otherwise, return `false`.
-
-#### Time Complexity:
-- **IsEmpty**: \( O(1) \)
+* **IsEmpty()**
+    * **Goal:** Check if the queue is empty.
+    * **Algorithm:** Returns `true` only if both `input_stack` and `output_stack` are empty.
 
 ---
 
-## Advantages
+## Key Properties
 
-1. **Efficient Enqueue**:
-   - Suitable for scenarios where enqueue operations are more frequent than dequeues.
-2. **FIFO Behavior**:
-   - The costly dequeue operation ensures that the oldest element is always dequeued first.
+* **FIFO Behavior:** Successfully simulates the FIFO principle.
+* **Lazy Reversal:** The expensive re-ordering of elements is deferred until it's absolutely necessary.
+* **Amortized Efficiency:** This is the defining performance characteristic of the algorithm.
 
 ---
 
-## Disadvantages
+## Advantages 👍
 
-1. **Costly Dequeue**:
-   - Dequeue operation requires transferring all elements between the two stacks, making it inefficient for frequent deletions.
-2. **Memory Overhead**:
-   - Two stacks are required, doubling the memory usage compared to a standard queue.
+* **Extremely Fast Enqueue:** The `$O(1)` enqueue operation makes this method ideal for scenarios where elements are added much more frequently than they are removed.
+* **Efficient on Average:** The amortized `$O(1)` time for dequeue makes it far more practical than the costly enqueue method for most use cases.
+
+---
+
+## Disadvantages 👎
+
+* **Unpredictable Dequeue Latency:** A single `dequeue` operation can be either very fast (`$O(1)`) or very slow (`$O(n)`). This unpredictability can be a problem in real-time systems where consistent performance is required.
+* **Memory Overhead:** Requires space for two stacks to simulate a single queue.
 
 ---
 
 ## Applications
 
-1. **Algorithm Demonstrations**:
-   - Useful for teaching stack-to-queue transformations.
-2. **Limited Use Cases**:
-   - Suitable for scenarios where enqueue operations are frequent compared to dequeues.
+This algorithm is primarily used in educational and interview settings.
+
+* **Technical Interviews:** This is often considered the "correct" and more optimized answer when asked to implement a queue from stacks.
+* **Algorithm Design:** It's a useful pattern in system design, such as in message queues or task systems where items are added rapidly but processed in batches.
 
 ---
 
-## Summary
+## Time Complexity
 
-| Operation  | Time Complexity |
-|------------|-----------------|
-| Enqueue    | \( O(1) \)      |
-| Dequeue    | \( O(n) \)      |
-| Peek       | \( O(n) \)      |
-| IsEmpty    | \( O(1) \)
+The distinction between worst-case and amortized time is critical.
 
----
+| Operation | Worst-Case Complexity | Amortized (Average) Complexity |
+| :-------- | :-------------------: | :----------------------------: |
+| **Enqueue** |        `$O(1)$`        |             `$O(1)`             |
+| **Dequeue** |        `$O(n)$`        |             `$O(1)`             |
+| **Peek** |        `$O(n)$`        |             `$O(1)`             |
+| **IsEmpty** |        `$O(1)$`        |             `$O(1)`             |

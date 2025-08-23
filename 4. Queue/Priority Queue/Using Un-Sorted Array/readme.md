@@ -1,110 +1,88 @@
-# Priority Queue Using an Unsorted Array
+## Priority Queue with an Unsorted Array: Fast Insert, Slow Retrieve
 
-A **Priority Queue** implemented using an **unsorted array** is a straightforward approach where elements are stored in no particular order. Despite its simplicity, it has specific performance characteristics that make it suitable for certain applications.
+Implementing a **Priority Queue** using an **unsorted array** is the most straightforward approach. The core idea is to add new elements quickly without maintaining any specific order, and only perform the work of finding the highest-priority item when it needs to be retrieved.
 
----
+Think of it like a disorganized pile of tasks on your desk. Adding a new task is easy—you just toss it on the pile. However, when you need to work on the *most important* task, you have to sift through every single paper on the desk to find it.
 
-## Key Characteristics
-
-1. **Storage**:
-   - Elements are stored in an array without any specific order.
-2. **Insertion**:
-   - New elements are appended to the array.
-3. **Priority Determination**:
-   - The highest-priority element is identified by scanning the entire array during deletion or retrieval operations.
-4. **Flexibility**:
-   - Can handle both min-priority and max-priority queues based on the priority selection criteria.
+***Note: Understand Flow via Code in `priorityQueue.c`***
 
 ---
 
-## Key Operations
+## How It Works: The Logic
 
-### **1. Insertion**
+The implementation is managed by a simple array and logic that separates the work of insertion from retrieval.
 
-Adds an element to the priority queue with a specific priority.
-
-#### Steps:
-1. Append the element to the end of the array.
-2. No rearrangement is required as the array remains unsorted.
-
-#### Time Complexity:
-- **Insertion**: \( O(1) \)
+* **The Array:** A standard array (either fixed-size or dynamic) is used to store the elements. The elements are kept in the order they were inserted, **not** in priority order.
+* **Insertion Logic:** To insert a new element, it is simply appended to the end of the array. This is a very fast operation.
+* **Retrieval Logic:** To find the element with the highest priority (for `peek` or `delete`), a loop must iterate through the entire array from beginning to end, keeping track of the highest-priority element found so far.
 
 ---
 
-### **2. Deletion (Remove Highest Priority Element)**
+## Operations and Algorithms
 
-Removes the element with the highest priority from the queue.
+The performance of this implementation is defined by a trade-off: `insert` is fast, while `peek` and `delete` are slow.
 
-#### Steps:
-1. Traverse the array to find the element with the highest priority.
-2. Remove the identified element by shifting the remaining elements to fill the gap.
+* **Insert(element, priority)**
+    * **Goal:** Add a new element to the queue.
+    * **Algorithm:** Add the new element to the next available position at the end of the array.
+    * **Complexity:** `$O(1)` (or amortized `$O(1)` if using a dynamic array that might need to resize).
 
-#### Time Complexity:
-- **Deletion**: \( O(n) \)
+* **Delete-Highest-Priority()**
+    * **Goal:** Find and remove the element with the highest priority.
+    * **Algorithm:**
+        1.  Linearly scan the entire array to find the *index* of the element with the highest priority. This takes `$O(n)` time.
+        2.  Store the element at that index to be returned.
+        3.  To remove it, swap this element with the last element in the array and then decrease the array's effective size by one. This removal step is `$O(1)`.
+    * **Complexity:** `$O(n)` (dominated by the search).
 
----
+* **Peek()**
+    * **Goal:** Find and return the highest-priority element without removing it.
+    * **Algorithm:** Linearly scan the entire array to find the element with the highest priority and return it.
+    * **Complexity:** `$O(n)`.
 
-### **3. Peek (Retrieve Highest Priority Element)**
-
-Retrieves the element with the highest priority without removing it.
-
-#### Steps:
-1. Traverse the array to find the element with the highest priority.
-2. Return the identified element.
-
-#### Time Complexity:
-- **Peek**: \( O(n) \)
-
----
-
-### **4. IsEmpty**
-
-Checks whether the priority queue is empty.
-
-#### Steps:
-1. If the array has no elements, return `true`.
-2. Otherwise, return `false`.
-
-#### Time Complexity:
-- **IsEmpty**: \( O(1) \)
+* **IsEmpty()**
+    * **Goal:** Check if the queue is empty.
+    * **Algorithm:** Check if the array's size is zero.
+    * **Complexity:** `$O(1)`.
 
 ---
 
-## Advantages
+## Key Properties
 
-1. **Simple Implementation**:
-   - Easy to implement as no sorting or rearranging is needed during insertion.
-2. **Efficient Insertion**:
-   - Insertion is performed in constant time \( O(1) \).
+* **Unordered Storage:** The defining characteristic. Elements are not stored in priority order.
+* **Linear Scan for Retrieval:** Finding the highest-priority item always requires a full search of the array.
+* **Fast Insertion:** Appending an element to the end of the array is a constant-time operation.
 
 ---
 
-## Disadvantages
+## Advantages 👍
 
-1. **Slow Deletion and Peek**:
-   - Finding the highest-priority element requires scanning the entire array, making these operations \( O(n) \).
-2. **Inefficient for Large Data**:
-   - Performance degrades as the size of the queue increases.
+* **Extremely Fast Insertions:** The `$O(1)` insertion time is the primary and only significant advantage of this implementation.
+* **Simple Implementation:** The logic is very easy to understand and code.
+
+---
+
+## Disadvantages 👎
+
+* **Very Slow Retrieval and Deletion:** The `$O(n)` complexity for `peek` and `delete` makes this implementation impractical for most priority queue use cases, as retrieving the highest-priority element is a core function.
+* **Poor Scalability:** Performance degrades linearly as the number of elements grows, making it unsuitable for large datasets.
 
 ---
 
 ## Applications
 
-1. **Simple Systems**:
-   - Suitable for applications where insertion is frequent, and retrieval or deletion is rare.
-2. **Learning Purposes**:
-   - Provides an easy-to-understand example for teaching priority queues.
+This implementation is rarely used in production environments due to its poor retrieval performance.
+
+* **Educational Tool:** It serves as an excellent baseline to demonstrate the performance trade-offs and to motivate the need for more efficient implementations like heaps.
+* **Niche Scenarios:** It is only viable in situations where insertions vastly outnumber retrievals. For example, if you need to collect a large number of items quickly and then process the single highest-priority item only once at the very end.
 
 ---
 
-## Summary
+## Time Complexity Summary
 
-| Operation        | Time Complexity |
-|------------------|-----------------|
-| Insertion        | \( O(1) \)      |
-| Deletion         | \( O(n) \)      |
-| Peek             | \( O(n) \)      |
-| IsEmpty          | \( O(1) \)      |
-
----
+| Operation          | Complexity | Explanation                                      |
+| :----------------- | :--------: | :----------------------------------------------- |
+| **Insert** |   `$O(1)`  | A simple append operation.                       |
+| **Delete-Highest** |   `$O(n)`  | Dominated by the linear search.                  |
+| **Peek** |   `$O(n)`  | Requires a full scan to find the best element.   |
+| **IsEmpty** |   `$O(1)`  | A simple size check.                             |

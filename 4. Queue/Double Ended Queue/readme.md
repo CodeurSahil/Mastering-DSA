@@ -1,183 +1,97 @@
-# Double-Ended Queue (Deque)
+## Deque: The Ultimate Hybrid Queue ↔️
 
-A **Double-Ended Queue (Deque)** is a linear data structure where elements can be added or removed from both ends, making it more flexible than a regular queue. It combines the functionality of a queue and a stack.
+A **Deque** (pronounced "deck"), short for **Double-Ended Queue**, is a linear data structure that generalizes the queue. Unlike a standard queue where elements are added at one end and removed from the other, a deque allows elements to be **added and removed from both the front and the rear**.
 
----
+This hybrid nature means a deque can behave like a queue, a stack, or a combination of both, making it a highly versatile "Swiss Army knife" data structure.
 
-## Key Characteristics
-
-1. **Bi-Directional Operations**:
-   - Supports insertion and deletion at both the front and rear ends.
-2. **Flexible Storage**:
-   - Can be implemented using arrays or linked lists.
-3. **Variants**:
-   - **Input-Restricted Deque**: Insertion is allowed at one end only.
-   - **Output-Restricted Deque**: Deletion is allowed at one end only.
+***Note: Understand Flow via Code in `deQueue.c`***
 
 ---
 
-## Key Operations
+## How It's Implemented
 
-### **1. Insert at Front**
+A deque's performance depends entirely on its underlying implementation. The two standard approaches offer excellent performance.
 
-Adds an element to the front of the deque.
+* **1. Using a Doubly Linked List**
+    * **Structure:** A doubly linked list is used with `head` and `tail` pointers.
+    * **Logic:** Adding/removing from the front manipulates the `head` pointer, and adding/removing from the rear manipulates the `tail` pointer. Because it's a *doubly* linked list, all four operations can be done in constant time.
+    * **Conclusion:** This is a very flexible, dynamic implementation where all end operations are a guaranteed `$O(1)`.
 
-#### Algorithm:
-1. Check if the deque is full.
-2. If the deque is empty, initialize `front` and `rear` to 0.
-3. If `front` is at the first position, move it to the last position (circular behavior).
-4. Otherwise, decrement `front`.
-5. Insert the element at the `front` position.
-
-#### Time Complexity:
-- **Array Implementation**: \( O(n) \) (due to shifting elements).
-- **Linked List Implementation**: \( O(1) \).
-
----
-
-### **2. Insert at Rear**
-
-Adds an element to the rear of the deque.
-
-#### Algorithm:
-1. Check if the deque is full.
-2. If the deque is empty, initialize `front` and `rear` to 0.
-3. If `rear` is at the last position, move it to the first position (circular behavior).
-4. Otherwise, increment `rear`.
-5. Insert the element at the `rear` position.
-
-#### Time Complexity:
-- **Array Implementation**: \( O(1) \) (if space is available).
-- **Linked List Implementation**: \( O(1) \).
+* **2. Using a Circular Array**
+    * **Structure:** A fixed-size array is treated as a circle with `front` and `rear` indices.
+    * **Logic:** This implementation uses modulo arithmetic to "wrap around" the array's ends.
+        * `addRear`: Increments `rear`.
+        * `removeFront`: Increments `front`.
+        * `addFront`: **Decrements** `front` (with wrap-around).
+        * `removeRear`: **Decrements** `rear` (with wrap-around).
+    * **Conclusion:** This is an extremely fast and cache-friendly implementation for a fixed-size deque. All end operations are `$O(1)`.
 
 ---
 
-### **3. Delete from Front**
+## Types of Deques
 
-Removes an element from the front of the deque.
+There are also two specialized, restricted versions of a deque:
 
-#### Algorithm:
-1. Check if the deque is empty.
-2. Retrieve the element at the `front` position.
-3. If `front` equals `rear`, reset both to -1 (deque becomes empty).
-4. If `front` is at the last position, move it to the first position (circular behavior).
-5. Otherwise, increment `front`.
-
-#### Time Complexity:
-- **Array Implementation**: \( O(n) \) (due to shifting elements).
-- **Linked List Implementation**: \( O(1) \).
+* **[Input-Restricted Deque](Input-Restricted%20Deque/readme.md):** You can add elements at only one end but can remove from both ends.
+* **[Output-Restricted Deque](Output-Restricted%20Deque/readme.md):** You can remove elements from only one end but can add at both ends.
 
 ---
 
-### **4. Delete from Rear**
+## Core Operations
 
-Removes an element from the rear of the deque.
+A deque is defined by four main operations for adding and removing elements, plus helpers.
 
-#### Algorithm:
-1. Check if the deque is empty.
-2. Retrieve the element at the `rear` position.
-3. If `front` equals `rear`, reset both to -1 (deque becomes empty).
-4. If `rear` is at the first position, move it to the last position (circular behavior).
-5. Otherwise, decrement `rear`.
-
-#### Time Complexity:
-- **Array Implementation**: \( O(1) \).
-- **Linked List Implementation**: \( O(1) \).
+* **`addFront(value)`:** Adds an element to the front of the deque.
+* **`addRear(value)`:** Adds an element to the rear of the deque (like a queue's `enqueue`).
+* **`removeFront()`:** Removes and returns the element from the front (like a queue's `dequeue`).
+* **`removeRear()`:** Removes and returns the element from the rear.
+* **`peekFront()` & `peekRear()`:** Views the element at the front or rear without removing it.
+* **`isEmpty()` & `isFull()`:** Checks if the deque is empty or at capacity.
 
 ---
 
-### **5. Peek at Front**
+## Key Properties
 
-Retrieves the element at the front without removing it.
-
-#### Algorithm:
-1. Check if the deque is empty.
-2. Return the element at the `front` position.
-
-#### Time Complexity:
-- **Array/Linked List Implementation**: \( O(1) \).
+* **Double-Ended Access:** The defining characteristic. Operations can occur at both ends.
+* **Hybrid Nature:** Can function as a stack (using `addFront`/`removeFront`) or a queue (using `addRear`/`removeFront`).
+* **Linear Structure:** Elements are stored sequentially.
+* **Implementation-Dependent:** Can be a fixed-size (circular array) or dynamic (doubly linked list) structure.
 
 ---
 
-### **6. Peek at Rear**
+## Advantages 👍
 
-Retrieves the element at the rear without removing it.
-
-#### Algorithm:
-1. Check if the deque is empty.
-2. Return the element at the `rear` position.
-
-#### Time Complexity:
-- **Array/Linked List Implementation**: \( O(1) \).
+* **Maximum Flexibility:** It can be used to efficiently implement both stacks and queues.
+* **Efficient Operations:** When implemented correctly (with a doubly linked list or circular array), all additions and removals from either end are performed in constant time, `$O(1)`.
 
 ---
 
-### **7. IsEmpty**
+## Disadvantages 👎
 
-Checks whether the deque is empty.
-
-#### Algorithm:
-1. If `front == -1`, return `true`.
-2. Otherwise, return `false`.
-
-#### Time Complexity:
-- **Array/Linked List Implementation**: \( O(1) \).
-
----
-
-### **8. IsFull**
-
-Checks whether the deque is full (for a fixed-size implementation).
-
-#### Algorithm:
-1. If `(front == 0 && rear == size-1)` or `(front == rear + 1)`, return `true`.
-2. Otherwise, return `false`.
-
-#### Time Complexity:
-- **Array Implementation**: \( O(1) \).
-
----
-
-## Advantages
-
-1. **Bi-Directional Access**:
-   - Supports both stack and queue functionalities.
-2. **Efficient Operations**:
-   - Allows insertion and deletion at both ends efficiently in linked list implementation.
-
----
-
-## Disadvantages
-
-1. **Increased Complexity**:
-   - Managing operations for both ends requires careful implementation.
-2. **Space Overhead**:
-   - For linked list implementation, additional memory is needed for pointers.
+* **Implementation Complexity:** A correct circular array implementation requires careful management of pointers and wrap-around logic, making it more complex than a simple queue or stack.
+* **Memory Overhead (Linked List):** The doubly linked list implementation requires two pointers per node, which can be less space-efficient than an array.
 
 ---
 
 ## Applications
 
-1. **Palindrome Checking**:
-   - Used to verify whether a string is a palindrome by comparing characters from both ends.
-2. **Job Scheduling**:
-   - Efficiently schedules jobs with varying priorities.
-3. **Sliding Window Problems**:
-   - Ideal for problems involving sliding windows in arrays.
+Deques are powerful tools for specific types of algorithms.
+
+* **Sliding Window Problems:** A deque is the go-to data structure for finding the maximum or minimum element in a sliding window over an array in linear (`$O(n)`) time.
+* **Palindrome Checking:** A classic example where you add characters to a deque and then repeatedly remove and compare the characters from the front and rear.
+* **Job Scheduling:** Can be used to implement schedulers where some high-priority jobs can be added to the front of the queue.
+* **Undo/Redo History:** Can store a limited-size history of actions where new actions are added to one end and old ones fall off the other.
 
 ---
 
-## Summary
+## Time Complexity Summary
 
-| Operation         | Array Implementation | Linked List Implementation |
-|-------------------|----------------------|-----------------------------|
-| Insert at Front   | \( O(n) \)          | \( O(1) \)                 |
-| Insert at Rear    | \( O(1) \)          | \( O(1) \)                 |
-| Delete from Front | \( O(n) \)          | \( O(1) \)                 |
-| Delete from Rear  | \( O(1) \)          | \( O(1) \)                 |
-| Peek at Front     | \( O(1) \)          | \( O(1) \)                 |
-| Peek at Rear      | \( O(1) \)          | \( O(1) \)                 |
-| IsEmpty           | \( O(1) \)          | \( O(1) \)                 |
-| IsFull            | \( O(1) \)          | \( O(1) \)                 |
+For both standard, efficient implementations:
 
----
+| Operation       | Doubly Linked List | Circular Array |
+| :-------------- | :----------------: | :------------: |
+| **addFront** |       `$O(1)`        |     `$O(1)`    |
+| **addRear** |       `$O(1)`        |     `$O(1)`    |
+| **removeFront** |       `$O(1)`        |     `$O(1)`    |
+| **removeRear** |       `$O(1)`        |     `$O(1)`    |
+| **Peek (Front/Rear)** |       `$O(1)`        |     `$O(1)`    |

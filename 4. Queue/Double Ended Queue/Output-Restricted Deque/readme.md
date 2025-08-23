@@ -1,152 +1,117 @@
-# Output-Restricted Deque (Deque)
+## Output-Restricted Deque: Add from Both Ends, Remove from One
 
-An **Output-Restricted Deque** is a type of double-ended queue where insertion is allowed at both ends, but deletion is restricted to only one end.
+An **Output-Restricted Deque** is a specialized version of a Double-Ended Queue (Deque). It follows a specific rule: elements can be **inserted** at both the `front` and the `rear`, but can only be **deleted** from the `front`.
 
----
+Think of it like a special ticket line. Regular customers can join at the back of the line, while VIP customers can be added directly to the front. However, the ticket agent only ever serves the person at the very front of the line.
 
-## Key Characteristics
-
-1. **Insertion at Both Ends**:
-   - New elements can be added at both the front and rear of the deque.
-2. **Deletion at One End**:
-   - Elements can only be removed from a single fixed end, typically the front.
-3. **Flexible Storage**:
-   - Can be implemented using arrays or linked lists.
+***Note: Understand Flow via Code in `deQueue.c`***
 
 ---
 
-## Key Operations
+## How It Works: Hybrid Behavior
 
-### **1. Insert at Front**
+This structure is a hybrid that combines the functionalities of a standard queue and a stack.
 
-Adds an element to the front of the deque.
+* By using **`addRear`** and **`removeFront`**, it behaves exactly like a **standard FIFO Queue**.
+* By using **`addFront`** and **`removeFront`**, it behaves exactly like a **LIFO Stack**.
 
-#### Algorithm:
-1. Check if the deque is full.
-2. If the deque is empty, initialize `front` and `rear` to 0.
-3. If `front` is at the first position, move it to the last position (circular behavior).
-4. Otherwise, decrement `front`.
-5. Insert the element at the `front` position.
-
-#### Time Complexity:
-- **Array Implementation**: \( O(1) \)
-- **Linked List Implementation**: \( O(1) \)
+The Output-Restricted Deque allows you to use both types of insertions, but because removal is only from the front, it enforces a strict, ordered processing of elements.
 
 ---
 
-### **2. Insert at Rear**
+## Operations and Algorithms
 
-Adds an element to the rear of the deque.
+Here are the detailed algorithms for the allowed operations, assuming an implementation with a circular array of size `MAX_SIZE`. The pointers `front` and `rear` are initialized to -1.
 
-#### Algorithm:
-1. Check if the deque is full.
-2. If the deque is empty, initialize `front` and `rear` to 0.
-3. If `rear` is at the last position, move it to the first position (circular behavior).
-4. Otherwise, increment `rear`.
-5. Insert the element at the `rear` position.
+* **addFront(value)**
+    * **Goal:** Add a new element to the front of the deque.
+    * **Algorithm:**
+        1.  Check if the deque is full (`(front == 0 && rear == MAX_SIZE - 1)` or `(front == rear + 1)`). If so, throw an overflow error.
+        2.  If the deque is empty (`front == -1`), set `front = 0` and `rear = 0`.
+        3.  Else if `front` is at the beginning (`front == 0`), wrap it around to the end: `front = MAX_SIZE - 1`.
+        4.  Otherwise, decrement `front`: `front = front - 1`.
+        5.  Insert the new element: `array[front] = value`.
 
-#### Time Complexity:
-- **Array Implementation**: \( O(1) \)
-- **Linked List Implementation**: \( O(1) \)
+* **addRear(value)**
+    * **Goal:** Add a new element to the rear of the deque.
+    * **Algorithm:**
+        1.  Check if the deque is full (`(front == 0 && rear == MAX_SIZE - 1)` or `(front == rear + 1)`). If so, throw an overflow error.
+        2.  If the deque is empty (`front == -1`), set `front = 0` and `rear = 0`.
+        3.  Else if `rear` is at the end (`rear == MAX_SIZE - 1`), wrap it around to the start: `rear = 0`.
+        4.  Otherwise, increment `rear`: `rear = rear + 1`.
+        5.  Insert the new element: `array[rear] = value`.
 
----
+* **removeFront()**
+    * **Goal:** Remove an element from the front (the only allowed deletion).
+    * **Algorithm:**
+        1.  Check if the deque is empty (`front == -1`). If so, throw an underflow error.
+        2.  Store the data to be returned: `data_to_return = array[front]`.
+        3.  If this is the last element (`front == rear`), reset the deque: `front = -1`, `rear = -1`.
+        4.  Else if `front` is at the end (`front == MAX_SIZE - 1`), wrap it around to the start: `front = 0`.
+        5.  Otherwise, increment `front`: `front = front + 1`.
+        6.  Return the stored data.
 
-### **3. Delete from Front**
+* **peekFront()**
+    * **Goal:** View the element at the front of the deque without removing it.
+    * **Algorithm:**
+        1.  Check if the deque is empty (`front == -1`). If so, indicate an error.
+        2.  Return the element at `array[front]`.
 
-Removes an element from the front of the deque (only allowed deletion operation).
+* **isEmpty()**
+    * **Goal:** Check if the deque contains any elements.
+    * **Algorithm:**
+        1.  Return `true` if `front == -1`, otherwise return `false`.
 
-#### Algorithm:
-1. Check if the deque is empty.
-2. Retrieve the element at the `front` position.
-3. If `front` equals `rear`, reset both to -1 (deque becomes empty).
-4. If `front` is at the last position, move it to the first position (circular behavior).
-5. Otherwise, increment `front`.
-
-#### Time Complexity:
-- **Array Implementation**: \( O(1) \)
-- **Linked List Implementation**: \( O(1) \)
-
----
-
-### **4. Peek at Front**
-
-Retrieves the element at the front without removing it.
-
-#### Algorithm:
-1. Check if the deque is empty.
-2. Return the element at the `front` position.
-
-#### Time Complexity:
-- **Array/Linked List Implementation**: \( O(1) \)
-
----
-
-### **5. IsEmpty**
-
-Checks whether the deque is empty.
-
-#### Algorithm:
-1. If `front == -1`, return `true`.
-2. Otherwise, return `false`.
-
-#### Time Complexity:
-- **Array/Linked List Implementation**: \( O(1) \)
+* **isFull()**
+    * **Goal:** Check if the deque has reached its maximum capacity.
+    * **Algorithm:**
+        1.  Return `true` if `(front == 0 && rear == MAX_SIZE - 1)` or if `(front == rear + 1)`. Otherwise, return `false`.
 
 ---
 
-### **6. IsFull**
+## Key Properties
 
-Checks whether the deque is full (for a fixed-size implementation).
-
-#### Algorithm:
-1. If `(front == 0 && rear == size-1)` or `(front == rear + 1)`, return `true`.
-2. Otherwise, return `false`.
-
-#### Time Complexity:
-- **Array Implementation**: \( O(1) \)
+* **Restricted Output:** The defining characteristic. Deletion (output) is only possible from the `front`.
+* **Flexible Input:** Insertion (input) is allowed at both the `front` and `rear`.
+* **Hybrid Functionality:** Blends the behaviors of a stack and a queue.
+* **Implementation:** Can be implemented efficiently using a **Doubly Linked List** or a **Circular Array**. The only difference from a full deque implementation is that the `removeRear` method is not exposed.
 
 ---
 
-## Advantages
+## Advantages 👍
 
-1. **Efficient Insertions**:
-   - Supports insertion at both ends, making it versatile.
-2. **Fast Deletions**:
-   - Deletion from the front is \( O(1) \).
-3. **Optimized for Certain Applications**:
-   - Useful when data needs frequent modifications at both ends.
+* **More Flexible than a Queue:** The ability to add high-priority items to the front (`addFront`) is a significant advantage over a standard queue that only allows adding to the rear.
+* **Maintains FIFO Integrity for Removal:** While insertions are flexible, the removal process is strictly ordered from the front, which is crucial for many scheduling and processing algorithms.
 
 ---
 
-## Disadvantages
+## Disadvantages 👎
 
-1. **Limited Deletion Flexibility**:
-   - Deletion can only happen at one end.
-2. **Increased Complexity**:
-   - Requires careful implementation to avoid overflow or underflow issues.
+* **Less Flexible than a Full Deque:** The restriction on output makes it less versatile than a standard deque, which allows removal from both ends.
+* **Niche Use Case:** It's a specialized tool and not as generally applicable as a full deque, stack, or queue.
 
 ---
 
 ## Applications
 
-1. **Task Scheduling**:
-   - Helps in scenarios where tasks can be added from either end but only removed in FIFO order.
-2. **Sliding Window Algorithms**:
-   - Used in processing continuous data streams.
-3. **Undo Mechanism in Editors**:
-   - Allows reversing actions while keeping insertion flexible.
+This data structure is perfect for scenarios that require a primary FIFO processing order but also need a way to inject high-priority items at the front.
+
+* **Priority Job Schedulers:** This is a classic use case.
+    * Normal-priority jobs are added to the rear using `addRear`.
+    * High-priority or urgent jobs are added to the front using `addFront`.
+    * The scheduler always processes the next available job from the front using `removeFront`.
+* **Buffer Management:** Can be used in systems where data arrives from two different sources (e.g., a normal channel and a high-priority channel) but is consumed by a single process in a strict sequential order.
 
 ---
 
-## Summary
+## Time Complexity
 
-| Operation         | Array Implementation | Linked List Implementation |
-|-------------------|----------------------|-----------------------------|
-| Insert at Front   | \( O(1) \)          | \( O(1) \)                 |
-| Insert at Rear    | \( O(1) \)          | \( O(1) \)                 |
-| Delete from Front | \( O(1) \)          | \( O(1) \)                 |
-| Peek at Front     | \( O(1) \)          | \( O(1) \)                 |
-| IsEmpty           | \( O(1) \)          | \( O(1) \)                 |
-| IsFull            | \( O(1) \)          | \( O(1) \)                 |
+For both efficient Doubly Linked List and Circular Array implementations:
 
----
+| Operation | Complexity |
+| :--- | :---: |
+| **addFront** | `$O(1)` |
+| **addRear** | `$O(1)` |
+| **removeFront** | `$O(1)` |
+| **peekFront** | `$O(1)` |
+| **isEmpty / isFull** | `$O(1)` |

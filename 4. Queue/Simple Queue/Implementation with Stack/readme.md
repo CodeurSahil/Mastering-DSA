@@ -1,125 +1,65 @@
-# Implementation of Queue Using Stacks
+## Queue from Stacks: A LIFO to FIFO Transformation 🔄
 
-A **Queue** implemented using **stacks** demonstrates how we can simulate the **FIFO (First In, First Out)** behavior of a queue using the **LIFO (Last In, First Out)** property of stacks. This implementation is an excellent example of algorithmic transformation.
+Implementing a **Queue** using two **Stacks** is a classic computer science problem that demonstrates how to simulate **FIFO (First-In, First-Out)** behavior using only **LIFO (Last-In, First-Out)** structures.
 
----
-
-## Key Components
-
-1. **Two Stacks**:
-   - Use two stacks (`stack1` and `stack2`) to manage the elements.
-   - These stacks can either be implemented using arrays or linked lists.
-
-2. **Stack Properties**:
-   - Stacks operate using the LIFO principle:
-     - **Push**: Adds an element to the top of the stack.
-     - **Pop**: Removes and returns the top element.
+This is less of a practical, high-performance solution and more of a conceptual exercise. It's a popular technical interview question designed to test your understanding of how data structures work fundamentally. The goal is to build a queue when you are only given stacks to work with.
 
 ---
 
-## Approaches to Implement Queue Using Stacks
+## The Core Idea: Reversing a Stack Creates a Queue
 
-### 1. Enqueue Costly Approach
+The entire implementation relies on a single, clever trick: **moving all elements from one stack to another reverses their order.**
 
-In this method, the **enqueue (add)** operation is made **costly**, while the **dequeue (remove)** operation is efficient.
+A stack stores elements in LIFO order. If you push `A`, then `B`, then `C` onto `stack1`, the order from top to bottom is `C, B, A`. If you then pop every element from `stack1` and push it onto `stack2`, the new order in `stack2` from top to bottom will be `A, B, C`.
 
-#### Steps:
-
-1. **Enqueue (Costly)**:
-   - When adding an element:
-     1. Pop all elements from `stack1` and push them into `stack2`.
-     2. Push the new element into `stack1`.
-     3. Transfer all elements back from `stack2` to `stack1`.
-   - This ensures that the oldest element remains at the top of `stack1`.
-
-2. **Dequeue (Efficient)**:
-   - Simply pop the top element from `stack1`.
-
-#### Time Complexity:
-- **Enqueue**: \( O(n) \) (due to the repeated transfer of elements).
-- **Dequeue**: \( O(1) \) (direct pop from `stack1`).
+Now, if you pop from `stack2`, you get `A`, then `B`, then `C`—exactly FIFO order! The two implementation methods are just different strategies for deciding *when* to perform this reversal.
 
 ---
 
-### 2. Dequeue Costly Approach
+## Implementation Methods and Algorithms
 
-In this method, the **dequeue (remove)** operation is made **costly**, while the **enqueue (add)** operation is efficient.
+There are two primary approaches to building a queue from two stacks.
 
-#### Steps:
-
-1. **Enqueue (Efficient)**:
-   - Push the new element directly into `stack1`.
-
-2. **Dequeue (Costly)**:
-   - When removing an element:
-     1. If `stack2` is empty:
-        - Pop all elements from `stack1` and push them into `stack2`.
-     2. Pop the top element from `stack2`.
-
-#### Time Complexity:
-- **Enqueue**: \( O(1) \) (direct push into `stack1`).
-- **Dequeue**: \( O(n) \) (only when `stack2` is empty, requiring a transfer).
+### [Making Enqueue Costly](Costly%20En-Queue/readme.md)
+### [Making Dequeue Costly (The Standard Approach)](Costly%20De-Queue/readme.md)
 
 ---
 
-## Key Differences Between the Two Approaches
+## Key Properties
 
-| Aspect              | Enqueue Costly            | Dequeue Costly             |
-|---------------------|---------------------------|----------------------------|
-| **Enqueue Time**    | \( O(n) \)               | \( O(1) \)                |
-| **Dequeue Time**    | \( O(1) \)               | \( O(n) \)                |
-| **When to Use**     | Dequeue operations dominate | Enqueue operations dominate |
+* **FIFO Behavior:** Despite being built from LIFO components, the final structure correctly adheres to the FIFO principle.
+* **Dynamic Size:** The queue's capacity is determined by the underlying stack implementations, which are typically dynamic.
+* **Composed Structure:** It is not a fundamental data structure but one composed of others.
 
 ---
 
-## Steps for Common Operations
+## Advantages 👍
 
-1. **IsEmpty**:
-   - Check if both `stack1` and `stack2` are empty.
-
-2. **Peek (Front)**:
-   - The element at the **front** is always:
-     - Top of `stack1` (Enqueue Costly).
-     - Top of `stack2` (Dequeue Costly).
-
-3. **Size**:
-   - The total size of the queue is the combined size of `stack1` and `stack2`.
+* **Algorithmic Insight:** It's an excellent exercise for deepening your understanding of data structures and how their properties can be transformed.
+* **Problem-Solving:** It demonstrates how to achieve a desired behavior with a constrained set of tools, a common scenario in software development.
 
 ---
 
-## Advantages
+## Disadvantages 👎
 
-1. **Efficient Use of Memory**:
-   - Dynamically uses memory as required by the stacks.
-2. **Algorithmic Flexibility**:
-   - Demonstrates how a queue's properties can be implemented using stacks.
-
----
-
-## Disadvantages
-
-1. **Higher Time Complexity**:
-   - One of the operations (enqueue or dequeue) is always costly, making it less efficient than direct queue implementations.
-2. **Extra Memory Overhead**:
-   - Requires two stacks to simulate a single queue.
+* **Inefficient Performance:** It is significantly slower than a native queue implementation (using an array or linked list). At least one of its core operations is not a true, consistent `$O(1)`.
+* **Higher Memory Usage:** It requires the memory overhead of two stacks to simulate a single queue.
 
 ---
 
 ## Applications
 
-1. **Algorithm Design**:
-   - Understanding data structure transformations and alternative implementations.
-2. **Simulation**:
-   - Situations where stack operations are more accessible than queue operations.
+The primary application for this implementation is **educational**.
+
+* **Technical Interviews:** A very common question used to evaluate a candidate's problem-solving skills and grasp of data structure mechanics.
+* **Algorithm Design:** Serves as a conceptual tool for proving that certain operations are possible or for building more complex algorithms.
+* **Constrained Environments:** In a theoretical scenario where a system or language only provides a stack API, this technique could be used to create a queue.
 
 ---
 
-## Comparison with Other Queue Implementations
+## Time Complexity Summary
 
-| Feature            | Array-Based Queue         | Linked-List Queue          | Queue Using Stacks         |
-|--------------------|---------------------------|----------------------------|----------------------------|
-| **Dynamic Size**   | No (unless dynamic array) | Yes                        | Yes                        |
-| **Time Complexity**| \( O(1) \) (enqueue/dequeue) | \( O(1) \)                | \( O(1) \) or \( O(n) \)   |
-| **Memory Overhead**| Moderate (array size)     | High (node pointers)       | High (two stacks)          |
-
----
+| Method                | Enqueue Complexity | Dequeue Complexity             |
+| :-------------------- | :----------------: | :----------------------------- |
+| **Enqueue Costly** |       `$O(n)$`      | `$O(1)`                        |
+| **Dequeue Costly** |       `$O(1)``      | **Amortized `$O(1)`** (Worst-Case `$O(n)`) |
