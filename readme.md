@@ -20,4 +20,10 @@
 ### Types of **Linear Data Structures**
 1. **Array** - [Know More 📚](1.%20Array/README.md)
 2. **Linked List** - [Know More 📚](2.%20Linked%20List/README.md)
+3. **Stack** - [Know More 📚](3.%20Stack/readme.md)
+4. **Queue** - [Know More 📚](4.%20Queue/readme.md)
+5. **Hash Table** - [Know More 📚](5.%20Hash%20Table/readme.md)
+6. **Tree** - [Know More 📚](6.%20Tree/readme.md)
+7. **Heap** - [Know More 📚](7.%20Heap/readme.md)
+8. **Graph** - [Know More 📚](8.%20Graph/readme.md)
 
