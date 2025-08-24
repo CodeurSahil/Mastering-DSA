@@ -6,6 +6,13 @@ A perfect analogy is an emergency room waiting area. Patients are treated based 
 
 ---
 
+### Implementation
+
+![PQ](/assets/priorityQueue.png)
+![PQ2](/assets/priorityQueue2.png)
+
+---
+
 ## How It Works: The Priority Rule
 
 A priority queue can be configured in one of two ways, depending on what "highest priority" means for a given problem:

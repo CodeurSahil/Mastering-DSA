@@ -6,6 +6,9 @@ It achieves this speed by using a special **hash function** to calculate an inde
 
 ---
 
+### Representation
+![HT](/assets/hashTable.png)
+
 ## How It Works: The Core Components
 
 A hash table is a combination of three essential parts that work together.

@@ -4,7 +4,11 @@ A **Queue** is a fundamental linear data structure that operates on the **FIFO (
 
 The best real-world analogy is a line of people waiting for tickets. The first person to get in line is the first person to be served. New people join the line at the **rear** (end), and people are served from the **front** (start).
 
+---
 
+### Representation
+
+![Queue](/assets/queue.png)
 
 ---
 

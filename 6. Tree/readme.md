@@ -6,6 +6,11 @@ The best analogy is a family tree or an organizational chart. There is a single 
 
 ---
 
+### Representation
+![Tree](/assets/tree.png)
+
+---
+
 ## Essential Tree Terminology
 
 To understand trees, you need to know their vocabulary.

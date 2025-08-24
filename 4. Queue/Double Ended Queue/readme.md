@@ -8,6 +8,11 @@ This hybrid nature means a deque can behave like a queue, a stack, or a combinat
 
 ---
 
+### Representation
+![DE Queue](/assets/deQueue.png)
+
+---
+
 ## How It's Implemented
 
 A deque's performance depends entirely on its underlying implementation. The two standard approaches offer excellent performance.

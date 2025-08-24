@@ -6,6 +6,11 @@ Its primary purpose is to always keep the element with the highest priority (eit
 
 ---
 
+### Representation
+![Heap](/assets/heap.png)
+
+---
+
 ## The Two Types of Heaps
 
 A heap is defined by the relationship between a parent node and its children.

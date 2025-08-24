@@ -6,6 +6,11 @@ Unlike a tree, a graph is a more general structure: it can have cycles, multiple
 
 ---
 
+### Representation
+![Graph](/assets/graph.png)
+
+---
+
 ## Essential Graph Terminology
 
 To speak the language of graphs, you need to know these key terms:
