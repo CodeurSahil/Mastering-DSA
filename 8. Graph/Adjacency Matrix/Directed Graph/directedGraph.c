@@ -1,375 +1,349 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h> // For using boolean types
 
-struct Node {
-    int data;
-    struct Node* next;
-};
-
+// Global variable for the topological sort stack pointer.
 int pointer = 0;
-// Function to create a graph
-int** createGraph(int vertex) {
-    int** graph = (int**) malloc(vertex * sizeof(int*));
 
-    for (int i = 0; i < vertex; i++) {
-        graph[i] = (int*)malloc(vertex * sizeof(int));
+/**
+ * @brief Creates and initializes a graph represented by an adjacency matrix.
+ * @param vertex The number of vertices in the graph.
+ * @return A 2D integer array (int**) representing the graph.
+ */
+int** createGraph(int vertex) {
+    // Allocate memory for the rows of the matrix.
+    int** graph = (int**) malloc(vertex * sizeof(int*));
+    if (graph == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(1);
     }
-    
+
+    // Allocate memory for the columns of each row and initialize to 0.
+    for (int i = 0; i < vertex; i++) {
+        graph[i] = (int*) calloc(vertex, sizeof(int)); // calloc initializes memory to 0.
+        if (graph[i] == NULL) {
+            printf("Memory allocation failed.\n");
+            exit(1);
+        }
+    }
+    printf("\nGraph with %d vertices created!\n", vertex);
     return graph;
 }
 
-struct Node* createNode(int data) {
-    struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
+/**
+ * @brief Adds a directed edge from a source to a destination vertex.
+ * @param graph The adjacency matrix.
+ * @param src The source vertex.
+ * @param dest The destination vertex.
+ */
+void addEdge(int** graph, int src, int dest) {
+    // Set the value at [src][dest] to 1 to represent a directed edge.
+    graph[src][dest] = 1;
 }
 
-void addEdge(int** graph, int src, int data) {
-    graph[src][data] = 1;
-    return;
-}
-
-// Print the graph
-void printGraph(int ** graph) {
-    // for (int v = 0; v < graph->vertex; ++v) {
-    //     struct Node* temp = graph->array[v].head;
-    //     printf("\n Adjacency List of vertex %d\n head", v);
-    //     while (temp) {
-    //         printf(" -> %d", temp->data);
-    //         temp = temp->next;
-    //     }
-    //     printf("\n");
-    // }
-}
-
-void deleteNode(int ** graph, int toBeDeletedVertex) {
-    // if (toBeDeletedVertex >= graph->vertex) {
-    //     printf("\n~Vertex Not Present~\n");
-    // }
-    
-    // for (int v = 0; v < graph->vertex; ++v) {
-    //     struct Node* temp = graph->array[v].head;
-
-    //     if (temp->data == toBeDeletedVertex) {
-    //         graph->array[v].head = temp->next;
-    //         printf("\nEdge Deleted %d to %d", v, toBeDeletedVertex);
-    //         continue;
-    //     }
-        
-    //     struct Node* prev = graph->array[v].head;
-
-    //     while (temp) {
-    //         if (temp->data == toBeDeletedVertex) {
-    //             printf("\nEdge Deleted %d to %d", v, toBeDeletedVertex);
-    //             prev->next = temp->next;
-    //             break;
-    //         }
-    //         prev = temp;
-    //         temp = temp->next;
-    //     }
-    // }
-
-    // graph->array[toBeDeletedVertex].head = NULL;
-
-    // return;
-}
-
-void bfsTraversal(int ** graph, int startVertex, int *visited, int vertex) {
-    struct Node* queue = createNode(startVertex);
-    struct Node* lastQueueNode = queue;
-
-    if (visited[startVertex]) {
-        return;
+/**
+ * @brief Prints the adjacency matrix representation of the graph.
+ * @param graph The adjacency matrix.
+ * @param vertex The number of vertices.
+ */
+void printGraph(int** graph, int vertex) {
+    printf("\nAdjacency Matrix:\n  ");
+    for (int i = 0; i < vertex; i++) {
+        printf("%d ", i);
     }
-
-    while (queue != NULL) {
-        int current = queue->data;
-        printf("%d ", current);
-        visited[startVertex] = 1;
-        
-
-        for (int neighbour = 0; neighbour < vertex; neighbour++) {
-            int value = graph[current][neighbour];
-
-            if (value && !visited[neighbour]) {
-                struct Node *node = createNode(neighbour);
-                visited[neighbour] = 1;
-                lastQueueNode->next = node;
-                lastQueueNode = lastQueueNode->next;
-            }
-            
+    printf("\n--|----------\n");
+    for (int i = 0; i < vertex; i++) {
+        printf("%d | ", i);
+        for (int j = 0; j < vertex; j++) {
+            printf("%d ", graph[i][j]);
         }
-
-        queue = queue->next;
+        printf("\n");
     }
-
-    return;
 }
 
-void dfsTraversal(int ** graph, int startVertex, int *visited, int vertex) {
+/**
+ * @brief Performs a Breadth-First Search (BFS) traversal.
+ * @param graph The adjacency matrix.
+ * @param startVertex The vertex to start the traversal from.
+ * @param visited An array to keep track of visited vertices.
+ * @param vertex The total number of vertices.
+ */
+void bfsTraversal(int** graph, int startVertex, int* visited, int vertex) {
+    if (visited[startVertex]) return;
+
+    // Create a simple array-based queue for BFS.
+    int* queue = (int*)malloc(vertex * sizeof(int));
+    int front = 0, rear = 0;
+
+    // Mark the start node as visited and enqueue it.
+    visited[startVertex] = 1;
+    queue[rear++] = startVertex;
+
+    while (front < rear) {
+        int currentVertex = queue[front++];
+        printf("%d ", currentVertex);
+
+        // Find all adjacent vertices (neighbors) and enqueue them if not visited.
+        for (int neighbor = 0; neighbor < vertex; neighbor++) {
+            if (graph[currentVertex][neighbor] == 1 && !visited[neighbor]) {
+                visited[neighbor] = 1;
+                queue[rear++] = neighbor;
+            }
+        }
+    }
+    free(queue);
+}
+
+/**
+ * @brief Performs a Depth-First Search (DFS) traversal.
+ * @param graph The adjacency matrix.
+ * @param startVertex The vertex to start the traversal from.
+ * @param visited An array to keep track of visited vertices.
+ * @param vertex The total number of vertices.
+ */
+void dfsTraversal(int** graph, int startVertex, int* visited, int vertex) {
     if (visited[startVertex]) {
         return;
     }
-    
     printf("%d ", startVertex);
     visited[startVertex] = 1;
 
-    for (int neighbour = 0; neighbour < vertex; neighbour++) {
-        int value = graph[startVertex][neighbour];
-
-        if (value && !visited[neighbour]) {
-            dfsTraversal(graph, neighbour, visited, vertex);
+    // Recursively visit all adjacent vertices.
+    for (int neighbor = 0; neighbor < vertex; neighbor++) {
+        if (graph[startVertex][neighbor] == 1 && !visited[neighbor]) {
+            dfsTraversal(graph, neighbor, visited, vertex);
         }
     }
-
-    return;
 }
 
-void findAllPaths(int ** graph, int *path, int startVertex, int endVertex, int index, int vertex) {
+/**
+ * @brief Recursively finds and prints all paths from a start to an end vertex.
+ * @param graph The adjacency matrix.
+ * @param path An array to store the current path.
+ * @param visited An array to prevent cycles in the current path.
+ * @param startVertex The current vertex in the path.
+ * @param endVertex The target destination vertex.
+ * @param index The current position in the path array.
+ * @param vertex The total number of vertices.
+ */
+void findAllPaths(int** graph, int* path, int* visited, int startVertex, int endVertex, int index, int vertex) {
     path[index++] = startVertex;
+    visited[startVertex] = 1;
 
     if (startVertex == endVertex) {
         for (int i = 0; i < index; i++) {
-            if (i == index - 1) {
-                printf("%d", path[i]);
-            } else {
-                printf("%d -> ", path[i]);
-            }
-            
+            printf("%d%s", path[i], (i == index - 1) ? "" : " -> ");
         }
         printf("\n");
-        return;
-    }
-
-    for (int neighbour = 0; neighbour < vertex; neighbour++) {
-        int value = graph[startVertex][neighbour];
-
-        if (value) {
-            findAllPaths(graph, path, neighbour, endVertex, index, vertex);
+    } else {
+        for (int neighbor = 0; neighbor < vertex; neighbor++) {
+            if (graph[startVertex][neighbor] == 1 && !visited[neighbor]) {
+                findAllPaths(graph, path, visited, neighbor, endVertex, index, vertex);
+            }
         }
     }
-
-    return;
+    // Backtrack: unmark the current vertex to explore other paths.
+    visited[startVertex] = 0;
 }
 
-int isCycleExistsUtils(int ** graph, int startVertex, int* visited, int* recursion, int vertex) {
-    visited[startVertex] = 1;
-    recursion[startVertex] = 1;
+/**
+ * @brief A utility function for cycle detection in a directed graph.
+ * @param graph The adjacency matrix.
+ * @param v The current vertex.
+ * @param visited An array to track visited vertices.
+ * @param recursionStack An array to track vertices in the current recursion path.
+ * @param vertex The total number of vertices.
+ * @return true if a cycle is detected, false otherwise.
+ */
+bool isCycleExistsUtils(int** graph, int v, int* visited, int* recursionStack, int vertex) {
+    if (!visited[v]) {
+        visited[v] = true;
+        recursionStack[v] = true;
 
-    for(int neighbour = 0; neighbour < vertex; neighbour++) {
-        int value = graph[startVertex][neighbour];
-
-        if (value && recursion[neighbour]) {
-            return 1;
-        } else if (value && !visited[neighbour] && isCycleExistsUtils(graph, neighbour, visited, recursion, vertex)) {
-            return 1;
+        for (int neighbor = 0; neighbor < vertex; neighbor++) {
+            if (graph[v][neighbor]) { // If there is an edge
+                if (!visited[neighbor] && isCycleExistsUtils(graph, neighbor, visited, recursionStack, vertex))
+                    return true;
+                else if (recursionStack[neighbor])
+                    return true;
+            }
         }
     }
-
-    recursion[startVertex] = 0;
-
-    return 0;
+    recursionStack[v] = false; // Pop from recursion stack before returning.
+    return false;
 }
 
-int isCycleExists(int** graph, int vertex) {
-    int cycleExists = 0;
-    int *visited = (int *)malloc(vertex * sizeof(int));
-
-    printf("\n");
+/**
+ * @brief Checks if a cycle exists in the directed graph.
+ * @param graph The adjacency matrix.
+ * @param vertex The total number of vertices.
+ * @return true if a cycle exists, false otherwise.
+ */
+bool isCycleExists(int** graph, int vertex) {
+    int* visited = (int*)calloc(vertex, sizeof(int));
+    int* recursionStack = (int*)calloc(vertex, sizeof(int));
+    if (visited == NULL || recursionStack == NULL) return false;
 
     for (int i = 0; i < vertex; i++) {
-        int *recursion = (int *)malloc(vertex * sizeof(int));
-        if (isCycleExistsUtils(graph, i, visited, recursion, vertex)) {
-            free(recursion);
-            cycleExists = 1;
-            break;
+        if (!visited[i]) {
+            if (isCycleExistsUtils(graph, i, visited, recursionStack, vertex)) {
+                free(visited);
+                free(recursionStack);
+                return true;
+            }
         }
     }
-
     free(visited);
-    return cycleExists;
+    free(recursionStack);
+    return false;
 }
 
-void stackPush(int *stack, int data) {
-    stack[pointer] = data;
-    pointer += 1;
-    return;
+/**
+ * @brief Pushes an item onto the topological sort stack.
+ * @param stack The stack array.
+ * @param data The data to push.
+ */
+void stackPush(int* stack, int data) {
+    stack[pointer++] = data;
 }
 
-void topologicalSort(int** graph, int startVertex, int* visited, int* stack, int vertex) {
-    if (visited[startVertex]) {
-        return;
-    }
-
+/**
+ * @brief A recursive helper for topological sorting.
+ * @param graph The adjacency matrix.
+ * @param startVertex The current vertex.
+ * @param visited An array to track visited vertices.
+ * @param stack The stack to store the sorted vertices.
+ * @param vertex The total number of vertices.
+ */
+void topologicalSortUtil(int** graph, int startVertex, int* visited, int* stack, int vertex) {
     visited[startVertex] = 1;
 
-    for (int neighbour = 0; neighbour < vertex; neighbour++) {
-        int value = graph[startVertex][neighbour];
-
-        if (value && !visited[neighbour] && neighbour != startVertex) {
-            topologicalSort(graph, neighbour, visited, stack, vertex);
+    for (int neighbor = 0; neighbor < vertex; neighbor++) {
+        if (graph[startVertex][neighbor] == 1 && !visited[neighbor]) {
+            topologicalSortUtil(graph, neighbor, visited, stack, vertex);
         }
     }
-
     stackPush(stack, startVertex);
-    
-    return;
 }
 
+/**
+ * @brief The main function that drives the program.
+ */
 int main() {
-    printf("Hello! Here You Can Perform Following Directed Graph Operation!\n");
+    printf("Hello! Here You Can Perform Following Directed Graph Operations (Adjacency Matrix)!\n");
     
     int vertex;
-    printf("\nEnter the Number of Vertices(Node): ");
+    printf("\nEnter the Number of Vertices(Nodes): ");
     scanf("%d", &vertex);
     
     int** graph = createGraph(vertex);
 
     int edges;
-
     printf("\nEnter the Number of Edges: ");
     scanf("%d", &edges);
 
     for (int i = 0; i < edges; i++) {
         int src, dest;
+        printf("Enter Edge %d (Source Destination): ", i + 1);
+        scanf("%d %d", &src, &dest);
 
-        printf("\nEnter the Source of Edge %d: ", i + 1);
-        scanf("%d", &src);
-        printf("Enter the Destination of Edge %d: ", i + 1);
-        scanf("%d", &dest);
-
-        if (src > vertex - 1) {
-            printf("\n~~ %d Source Vertex Not Present ~~\n\n", src);
-            i--;
-            continue;
+        if (src >= vertex || dest >= vertex || src < 0 || dest < 0) {
+            printf("\n~~ Invalid Vertex! Please enter vertices between 0 and %d. ~~\n\n", vertex - 1);
+            i--; continue;
         }
-
-        if (dest > vertex - 1) {
-            printf("\n~~ %d Target Vertex Not Present ~~\n\n", dest);
-            i--;
-            continue;
-        }
-
         if (src == dest) {
-            printf("\n~~ Source & Target Can't Be Same ~~\n\n");
-            i--;
-            continue;
+            printf("\n~~ Self-loops are not allowed. ~~\n\n");
+            i--; continue;
         }
-
         addEdge(graph, src, dest);
     }
-    // printGraph(graph);
 
-    /**
-     * Vertex Add Remove
-     * Edge Add Remove
-     * Traversal Operations - BFS, DFS
-     * 
-     */
     int choice;
-
     while (1) {
-        printf("\n1. Breadth First Search\n2. Depth First Search\n3. Find All Path's\n4. Is Cycle Exists\n5. Topological Sort\n6. Exit\nEnter Your Choice:- ");
+        printf("\n1. Display Graph\n2. Breadth First Search\n3. Depth First Search\n4. Find All Paths\n5. Check for Cycle\n6. Topological Sort\n7. Exit\nEnter Your Choice:- ");
         scanf("%d", &choice);
 
         switch (choice) {
-        case 1: {
-            int *visited = (int *)malloc(vertex * sizeof(int));
-
-            printf("\n");
-
-            for (int i = 0; i < vertex; i++) {
-                bfsTraversal(graph, i, visited, vertex);
-            }
-
-            printf("\n");
-
-            free(visited);
-
+        case 1: { // Display Graph
+            printGraph(graph, vertex);
             break;
         }
-
-        case 2: {
-            int *visited = (int *)malloc(vertex * sizeof(int));
-
+        case 2: { // BFS
+            int startVertex;
+            printf("\nEnter start vertex for BFS: ");
+            scanf("%d", &startVertex);
+            int* visited = (int*)calloc(vertex, sizeof(int));
+            printf("\nBFS Traversal: ");
+            bfsTraversal(graph, startVertex, visited, vertex);
             printf("\n");
-
-            for (int i = 0; i < vertex; i++) {
-                dfsTraversal(graph, i, visited, vertex);
-            }
-
-            printf("\n");
-
             free(visited);
-
             break;
         }
-
-        case 3: {
-            int startVertex, endVertex, index = 0;
-            int *path = (int *)malloc(2 * vertex * sizeof(int));
-
+        case 3: { // DFS
+            int startVertex;
+            printf("\nEnter start vertex for DFS: ");
+            scanf("%d", &startVertex);
+            int* visited = (int*)calloc(vertex, sizeof(int));
+            printf("\nDFS Traversal: ");
+            dfsTraversal(graph, startVertex, visited, vertex);
+            printf("\n");
+            free(visited);
+            break;
+        }
+        case 4: { // Find All Paths
+            int startVertex, endVertex;
             printf("\nEnter Start Vertex: ");
             scanf("%d", &startVertex);
-
             printf("Enter End Vertex: ");
             scanf("%d", &endVertex);
             
-            printf("\nPaths: \n");
-            findAllPaths(graph, path, startVertex, endVertex, index, vertex);
+            int* path = (int*)malloc(vertex * sizeof(int));
+            int* visited = (int*)calloc(vertex, sizeof(int));
+            printf("\nPaths from %d to %d:\n", startVertex, endVertex);
+            findAllPaths(graph, path, visited, startVertex, endVertex, 0, vertex);
+            free(path);
+            free(visited);
             break;
         }
-
-        case 4: {
+        case 5: { // Check for Cycle
             if (isCycleExists(graph, vertex)) {
-                printf("Cycle Exists!\n");
+                printf("\nCycle Exists in the graph.\n");
             } else {
-                printf("Cycle Does Not Exists!\n");
+                printf("\nNo Cycle Exists in the graph.\n");
             }
-
             break;
-        }
-
-        case 5: {
-            if (isCycleExists(graph)) {
-                printf("Cycle Exists! Can't Perform Topological Sort\n");
+        }  
+        case 6: { // Topological Sort
+            if (isCycleExists(graph, vertex)) {
+                printf("\nCycle Exists! Can't Perform Topological Sort on a cyclic graph.\n");
                 break;
             }
-
-            int *visited = (int *)malloc(vertex * sizeof(int));
-            int *stack = (int *)malloc(vertex * sizeof(int));
-
+            int* visited = (int*)calloc(vertex, sizeof(int));
+            int* stack = (int*)malloc(vertex * sizeof(int));
             pointer = 0;
-
-            printf("\n");
-
             for (int i = 0; i < vertex; i++) {
                 if (!visited[i]) {
-                    topologicalSort(graph, i, visited, stack, vertex);
+                    topologicalSortUtil(graph, i, visited, stack, vertex);
                 }
             }
-
+            printf("\nTopological Sort: ");
             for (int i = vertex - 1; i >= 0; i--) {
                 printf("%d ", stack[i]);
             }
-
             printf("\n");
-
             free(visited);
-
+            free(stack);
             break;
         }
-            
-        case 6:
-            printf("Thanks For Using! Have a Great Day!");
+        case 7: // Exit
+            printf("\nThanks For Using! Have a Great Day!\n");
+            for(int i=0; i<vertex; i++) free(graph[i]);
             free(graph);
             return 0;
         default:
-            printf("Please Enter a Vaild Input!\n");
+            printf("\nPlease Enter a Valid Input!\n");
             break;
         }
     }
-
     return 0;
 }

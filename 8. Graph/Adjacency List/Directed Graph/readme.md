@@ -1,194 +1,113 @@
-# Directed Graph (Digraph) Explained
+## Directed Graph (Digraph): Where Relationships Have Direction →
 
-A **Directed Graph**, often referred to as a **Digraph**, is a type of graph where each edge has a specific direction. This direction indicates a one-way relationship from one vertex to another. Unlike undirected graphs where edges are bidirectional, in a directed graph, an edge from vertex `A` to vertex `B` does not imply an edge from `B` to `A`.
+A **Directed Graph**, or **Digraph**, is a type of graph where every edge has a specific **direction**. It consists of a set of vertices connected by edges, where each edge represents a one-way path from a `source` vertex to a `destination` vertex.
 
----
+This is fundamentally different from an undirected graph. An edge from vertex `A` to `B` (`A → B`) does not imply a path exists from `B` to `A`. Think of a city with one-way streets or following someone on Twitter—the relationship is not automatically mutual.
 
-## Basic Terminology (Specific to Directed Graphs)
-
-* **Directed Edge (Arc):** An edge $(u, v)$ goes from vertex `u` (the **tail** or **source**) to vertex `v` (the **head** or **destination**).
-    * Example: A -> B. This means you can go from A to B, but not necessarily from B to A.
-* **In-degree of a Vertex:** The number of incoming edges to a vertex.
-    * Example: If edges are (A, C), (B, C), (D, C), then the in-degree of C is 3.
-* **Out-degree of a Vertex:** The number of outgoing edges from a vertex.
-    * Example: If edges are (C, E), (C, F), then the out-degree of C is 2.
-* **Source Vertex:** A vertex with an in-degree of 0.
-* **Sink Vertex:** A vertex with an out-degree of 0.
-* **Directed Path:** A sequence of vertices $v_0, v_1, \dots, v_k$ such that there is a directed edge $(v_i, v_{i+1})$ for all $0 \le i < k$.
-* **Directed Cycle:** A directed path that starts and ends at the same vertex, visiting other vertices only once.
-* **Strongly Connected Graph:** A directed graph in which there is a path from each vertex to every other vertex.
-* **Strongly Connected Component (SCC):** A maximal strongly connected subgraph. This means it's a subgraph where every vertex is reachable from every other vertex within that subgraph, and it cannot be extended by adding more vertices from the original graph and still maintain strong connectivity.
-* **Weakly Connected Graph:** A directed graph is weakly connected if, when you ignore the direction of edges, the underlying undirected graph is connected.
+***Note: Understand Flow via Code in `directedGraph.c`***
 
 ---
 
-## Types of Directed Graphs
+## Specialized Terminology for Digraphs
 
-* **Directed Acyclic Graph (DAG):** A directed graph that contains no directed cycles. DAGs are extremely important for representing dependencies, scheduling tasks, and many other applications.
-    * **Example:** Task dependencies in a project (Task A must complete before Task B), course prerequisites.
-* **Directed Cyclic Graph:** A directed graph that contains at least one directed cycle.
-* **Weighted Directed Graph:** Each directed edge has an associated numerical value (weight or cost).
-    * **Example:** Flight routes with associated travel times or costs.
+Directed graphs introduce some specific terminology:
 
----
-
-## Representation of Directed Graphs
-
-Similar to undirected graphs, directed graphs can be represented using:
-
-1.  **Adjacency Matrix:**
-    * A $V \times V$ matrix.
-    * `matrix[i][j] = 1` (or weight) if there's a directed edge from vertex `i` to vertex `j`.
-    * `matrix[j][i]` would be `0` (or `infinity`) if there's no edge from `j` to `i`.
-    * Space: $O(V^2)$.
-    * Time to check edge `(i, j)`: $O(1)$.
-    * Time to find all outgoing neighbors of `i`: $O(V)$.
-    * Time to find all incoming neighbors of `i`: $O(V)$.
-
-2.  **Adjacency List:**
-    * An array (or hash map) where each index `i` stores a list of vertices `j` for which a directed edge `(i, j)` exists.
-    * For incoming edges, you might need a reverse adjacency list.
-    * Space: $O(V + E)$ (where `E` is the number of edges).
-    * Time to check edge `(i, j)`: $O(\text{out-degree of } i)$.
-    * Time to find all outgoing neighbors of `i`: $O(\text{out-degree of } i)$.
-    * Time to find all incoming neighbors of `i`: $O(\text{in-degree of } i)$ if a reverse adjacency list is maintained, otherwise $O(V+E)$ or $O(V^2)$ to iterate through all edges.
-
-3.  **Edge List:**
-    * A list of tuples, where each tuple `(u, v)` represents a directed edge from `u` to `v`.
-    * Space: $O(E)$.
-    * Pros: Simple to store, useful for algorithms that iterate over all edges.
-    * Cons: Inefficient for checking adjacency or finding neighbors.
+* **Directed Edge (or Arc):** A connection from a `source` (tail) vertex to a `destination` (head) vertex.
+* **In-Degree:** The number of edges pointing **into** a vertex.
+* **Out-Degree:** The number of edges pointing **out of** a vertex.
+* **Source Vertex:** A vertex with an in-degree of 0 (a natural starting point).
+* **Sink Vertex:** A vertex with an out-degree of 0 (a natural ending point).
 
 ---
 
-## Graph Traversal Algorithms (Applied to Directed Graphs)
+## Key Types of Directed Graphs
 
-BFS and DFS work on directed graphs, but their properties change due to direction:
+The most important classification for directed graphs is whether they contain cycles.
 
-1. Here’s a corrected and structured version of your **Breadth-First Search (BFS)** algorithm description:
+* **Directed Acyclic Graph (DAG):**
+    * **Definition:** A directed graph that contains **no directed cycles**.
+    * **Importance:** This is an extremely important structure for modeling any process with a defined order, such as dependencies or schedules. You can't have a situation where Task A must happen before Task B, and Task B must happen before Task A.
+    * **Example:** Course prerequisites (you must take Calculus I before Calculus II).
 
----
-
-1. ✅ **Breadth-First Search (BFS) Algorithm**
-
-    **Parameters Required:**
-
-    * `visited[]`: An array to track whether a vertex has been visited.
-    * `Queue`: A queue data structure to hold vertices to explore.
-
-    ---
-
-    ### **Steps:**
-
-    1. **Initialize**:
-       Add the starting vertex `start` to the queue.
-       Mark `visited[start] = true`.
-
-    2. **Loop Until Queue is Empty**:
-
-       * Dequeue the front element, call it `current`.
-       * Print or process `current`.
-       * For each **neighbor** of `current`:
-
-         * If `visited[neighbor] == false`:
-
-           * Enqueue `neighbor`.
-           * Mark `visited[neighbor] = true`.
-
-2.  **Depth-First Search (DFS):** Uses Recurssion Approach
-
-    **Parameters Required:**
-    * `visited[]`: An array to track whether a vertex has been visited.
-
-    ---
-
-    ### **Steps:**
-
-    1. If `visited[neighbor] == True`: return;
-
-    2. Mark the Node a Visited i.e. `visited[startVertex] = True`;
-
-    3. DFS its Neighbour i.e. `dfsTraversal(graph, neighbourData, visited);`
-    
-    ### Details
-    * Explores as far as possible along each directed path before backtracking.
-    * Crucial for many directed graph algorithms.
-    * **Applications:**
-        * **Cycle Detection:** A directed graph has a cycle if and only if a DFS traversal finds a back edge (an edge from a vertex to an ancestor in the DFS tree).
-        * **Topological Sorting:** Only applicable to DAGs. Provides a linear ordering of vertices such that for every directed edge $(u, v)$, $u$ comes before $v$ in the ordering.
-        * **Finding Strongly Connected Components (SCCs):** Algorithms like Kosaraju's Algorithm or Tarjan's Algorithm use DFS (often two passes) to find SCCs.
+* **Directed Cyclic Graph:** A directed graph that contains at least one cycle.
 
 ---
 
-## Key Algorithms for Directed Graphs
+## How to Represent a Digraph in Code
 
-Many graph algorithms are specifically designed or primarily used for directed graphs:
-
-* **Topological Sort:**
-    * **Kahn's Algorithm (BFS-based):** Uses in-degrees of nodes.
-    * **DFS-based Algorithm:** Uses finish times of nodes in DFS.
-    * **Applications:** Task scheduling, dependency resolution, course prerequisites, build systems.
-
-* **Strongly Connected Components (SCCs):**
-    * **Kosaraju's Algorithm:** Two DFS passes, one on the original graph and one on its transpose.
-    * **Tarjan's Algorithm:** A single DFS pass using discovery times and low-link values.
-    * **Applications:** Analyzing network robustness, identifying groups of mutually reachable pages on the web, software module dependency analysis.
-
-* **Shortest Path Algorithms:**
-    * **Dijkstra's Algorithm:** Works on directed graphs with non-negative edge weights.
-    * **Bellman-Ford Algorithm:** Works on directed graphs with potentially negative edge weights and can detect negative cycles.
-    * **DAG Shortest Path:** For DAGs, a linear time ($O(V+E)$) algorithm exists by first performing a topological sort and then relaxing edges in that order. This is faster than Dijkstra's or Bellman-Ford for DAGs.
-
-* **Reachability Analysis:** Determining if one vertex can reach another. Often solved using BFS or DFS.
-
-* **Transitive Closure:** For every pair of vertices (u, v), determine if v is reachable from u. Can be computed using repeated BFS/DFS or Floyd-Warshall.
+* **Adjacency Matrix:** The `V x V` matrix is **not necessarily symmetric**. An edge `i → j` is represented by setting `matrix[i][j] = 1`, but `matrix[j][i]` remains `0` unless there is also an edge `j → i`.
+* **Adjacency List:** The list at index `i` contains all the vertices that vertex `i` has an **outgoing** edge to. To efficiently find all incoming edges, a second, "reverse" adjacency list is sometimes maintained.
 
 ---
 
-## Advantages of Directed Graphs
+## Operations and Algorithms
 
-* **Accurate Modeling of Asymmetric Relationships:** Essential for representing relationships where direction matters (e.g., "A follows B" is different from "B follows A").
-* **Dependency Representation:** Perfect for showing prerequisites, task order, and causal relationships.
-* **Network Flow:** Directed graphs with capacities are fundamental for network flow problems.
+While basic operations are similar to undirected graphs, many algorithms are unique to or have special significance for digraphs.
 
----
+* **Add Edge(source, destination)**
+    * **Goal:** Create a one-way connection between two vertices.
+    * **Algorithm:** In an adjacency list, add `destination` to the list for `source`. In a matrix, set `matrix[source][destination] = 1`.
 
-## Disadvantages of Directed Graphs
+* **Traversal (BFS and DFS)**
+    * **Goal:** Visit all *reachable* nodes from a starting vertex.
+    * **Algorithm:** The same as for an undirected graph, but you can only follow edges in their specified forward direction.
 
-* **Increased Complexity in Some Algorithms:** Algorithms like finding connected components become more nuanced (strong vs. weak connectivity).
-* **Cycles Can Cause Issues:** Directed cycles can lead to infinite loops in naive traversals and complicate algorithms that expect a defined order (like topological sort).
-* **Bidirectional Relationship Requires Two Edges:** If a relationship is truly bidirectional (e.g., A and B are friends), it must be explicitly represented by two directed edges (A -> B and B -> A), or the graph should be modeled as undirected.
+* **Topological Sort**
+    * **Goal:** For a **DAG**, produce a linear ordering of its vertices such that for every directed edge `u → v`, vertex `u` comes before vertex `v` in the ordering.
+    * **Algorithm (Kahn's Algorithm - BFS based):**
+        1.  Compute the in-degree for every vertex.
+        2.  Initialize a queue with all vertices that have an in-degree of 0.
+        3.  While the queue is not empty, dequeue a vertex `u`, add it to the sorted list, and for each of `u`'s neighbors `v`:
+        4.  Decrement the in-degree of `v`. If `v`'s in-degree becomes 0, enqueue it.
 
----
-
-## Applications of Directed Graphs
-
-Directed graphs are foundational in countless domains:
-
-* **Social Networks:** Representing "follows," "subscribes to," or "sends messages to" relationships.
-* **The World Wide Web:** Web pages are vertices, and hyperlinks are directed edges. Used by search engines for ranking (e.g., PageRank).
-* **Flow Networks:** Modeling water flow, traffic flow, supply chains, electrical circuits.
-* **Dependency Graphs:** Compilers (call graphs, dependency analysis), build systems (Makefiles), project management (task dependencies).
-* **State Machines/Finite Automata:** Representing states and transitions in systems.
-* **Decision-Making:** Modeling decision trees or flowcharts.
-* **Biological Networks:** Gene regulatory networks, metabolic pathways.
-* **Computer Networks:** Routing protocols, data flow.
+* **Cycle Detection**
+    * **Goal:** Determine if the graph contains a cycle.
+    * **Algorithm (DFS based):**
+        1.  Perform a DFS traversal. Maintain two sets of visited nodes: one for the overall traversal, and one for the nodes in the *current recursion path*.
+        2.  If the DFS encounters a node that is already in the current recursion path, a back edge has been found, and the graph has a cycle.
 
 ---
 
-## Time Complexity (Summary for Directed Graphs)
+## Key Properties
 
-The complexities are generally the same as for general graphs, but the specific definitions (e.g., in-degree vs. out-degree) become relevant. `V` is the number of vertices, `E` is the number of edges.
-
-| Operation/Algorithm       | Adjacency List (Sparse) | Adjacency Matrix (Dense) |
-| :------------------------ | :---------------------- | :----------------------- |
-| Add Edge                  | O(1)                    | O(1)                     |
-| Check Edge (u, v)         | O(out-degree of u)      | O(1)                     |
-| DFS Traversal             | O(V + E)                | O($V^2$)                 |
-| BFS Traversal             | O(V + E)                | O($V^2$)                 |
-| Topological Sort          | O(V + E)                | O($V^2$)                 |
-| Bellman-Ford              | O(V * E)                | O($V^3$)                 |
-| Dijkstra's (with PQ)      | O(E log V)              | O($V^2$)                 |
-| SCC (Kosaraju/Tarjan)     | O(V + E)                | O($V^2$)                 |
+* **Directed Edges:** The defining characteristic. All relationships are one-way.
+* **Asymmetric Relationships:** The adjacency property is not symmetric; `A` being adjacent to `B` does not mean `B` is adjacent to `A`.
+* **Complex Connectivity:** The concept of connectivity is more nuanced, splitting into **weakly connected** (connected if you ignore directions) and **strongly connected** (every node is reachable from every other node).
 
 ---
+
+## Advantages 👍
+
+* **Accurate Modeling of Asymmetric Relationships:** Essential for representing real-world scenarios where direction matters, such as dependencies, web links, or one-way traffic.
+* **Enables Specific Algorithms:** Allows for powerful, directed-only algorithms like Topological Sort, which are critical for scheduling and dependency analysis.
+
+---
+
+## Disadvantages 👎
+
+* **Increased Complexity:** Algorithms for concepts like connectivity become more nuanced (strong vs. weak).
+* **Cycles Can Cause Problems:** Directed cycles can lead to infinite loops or invalid states in algorithms that expect a defined order (like topological sort).
+
+---
+
+## Applications
+
+Directed graphs are foundational in countless domains.
+
+* **Dependency Graphs:** Used in project management (task dependencies), build systems (Makefiles), and resolving software package dependencies.
+* **The World Wide Web:** Web pages are vertices, and hyperlinks are directed edges. This is the basis for ranking algorithms like Google's PageRank.
+* **State Machines:** Representing states and the transitions between them in software and hardware design.
+* **Navigation and Flow Networks:** Modeling one-way streets, the flow of water in pipes, or data in a computer network.
+
+---
+
+## Time Complexity Summary
+
+Let `V` be the number of vertices and `E` be the number of edges.
+
+| Operation/Algorithm       | Adjacency List (Sparse Graphs) | Adjacency Matrix (Dense Graphs) |
+| :------------------------ | :----------------------------: | :-----------------------------: |
+| **Add Edge** |             `$O(1)`              |              `$O(1)`              |
+| **Check Edge (u → v)** |       `$O(\text{out-degree}(u))$`       |              `$O(1)`              |
+| **BFS / DFS Traversal** |           `$O(V + E)`           |             `$O(V^2)`            |
+| **Topological Sort (DAG)** |           `$O(V + E)`           |             `$O(V^2)`            |

@@ -1,18 +1,13 @@
-# Directed Graph using Adjacency Matrix
+## Directed Graph with an Adjacency Matrix
 
-A **Directed Graph**, or **Digraph**, is a graph where edges have a specific direction, representing a one-way relationship. When represented by an **Adjacency Matrix**, a V x V grid, this directionality is key.
+A **Directed Graph (Digraph)** is a graph where edges have a specific direction, representing a one-way relationship. When this is represented by an **Adjacency Matrix**, the `V x V` grid's structure directly reflects this directionality.
 
-Unlike an undirected graph, the matrix for a directed graph is **not necessarily symmetric**. An entry `matrix[u][v] = 1` signifies an edge from `u` to `v`, but this does not imply an edge from `v` to `u`.
+The key feature is that the matrix is **not necessarily symmetric**. An entry at `matrix[u][v] = 1` signifies a one-way edge `u → v`, but this does not imply an edge exists from `v` back to `u`.
 
-**How it works:**
-* A cell `matrix[u][v]` indicates if there's a directed edge from the row vertex `u` to the column vertex `v`.
-* For an **unweighted digraph**, `matrix[u][v] = 1` if an edge `u -> v` exists, and `0` otherwise.
-* For a **weighted digraph**, `matrix[u][v] = w` (the edge's weight) if an edge `u -> v` exists.
+Think of it like a "who follows whom" chart on a social media platform. A checkmark at the intersection of row "Alice" and column "Bob" means Alice follows Bob, but the reverse isn't automatically true.
 
 **Example:**
 Consider this simple directed graph:
-
-
 
 A -> B
 ^    |
@@ -30,129 +25,119 @@ The corresponding adjacency matrix is not symmetric:
 * `matrix[A][B]` is 1 because of the edge `A -> B`.
 * However, `matrix[B][A]` is 0 because there is no edge `B -> A`.
 
+***Note: Understand Flow via Code in `directedGraph.c`***
+
 ---
+
+## How It Works
+
+For a graph with `V` vertices (labeled 0 to V-1), the `V x V` matrix is populated as follows:
+
+* **Unweighted Digraph:** `matrix[u][v] = 1` if an edge `u → v` exists, and `0` otherwise.
+* **Weighted Digraph:** `matrix[u][v] = weight` if an edge `u → v` exists, and `0` or `infinity` otherwise.
+* **Asymmetry:** The cell `matrix[u][v]` is independent of `matrix[v][u]`.
+
+---
+
 ## Operations and Algorithms
 
-* ### **Add Edge**
-    * **Description:** Creates a directed edge from vertex `u` to `v`.
-    * **Algorithm:** Set `matrix[u][v] = 1` (or the weight). The cell `matrix[v][u]` is not changed.
+### Basic Operations
 
-* ### **Remove Edge**
-    * **Description:** Deletes the directed edge from `u` to `v`.
-    * **Algorithm:** Set `matrix[u][v] = 0`.
+* **Add Edge(u, v)**
+    * **Goal:** Create a directed edge from vertex `u` to `v`.
+    * **Algorithm:** Set `matrix[u][v] = 1` (or the `weight`). The cell `matrix[v][u]` remains unchanged.
 
-* ### **Check for Edge**
-    * **Description:** Determines if a directed edge exists from `u` to `v`.
-    * **Algorithm:** Check if `matrix[u][v] == 1`.
+* **Remove Edge(u, v)**
+    * **Goal:** Delete the directed edge from `u` to `v`.
+    * **Algorithm:** Set `matrix[u][v] = 0` (or `infinity`).
 
-* ### **Find Outgoing Neighbors (Successors)**
-    * **Description:** Finds all vertices that `u` has an edge *to*.
-    * **Algorithm:** Iterate through the row `matrix[u]`. If `matrix[u][j] == 1`, then `j` is a successor.
+* **Check for Edge(u, v)**
+    * **Goal:** Determine if a directed edge exists from `u` to `v`.
+    * **Algorithm:** Return `true` if `matrix[u][v]` indicates an edge, otherwise `false`.
 
-* ### **Find Incoming Neighbors (Predecessors)**
-    * **Description:** Finds all vertices that have an edge *to* `u`.
-    * **Algorithm:** Iterate through the column `matrix[][u]`. If `matrix[j][u] == 1`, then `j` is a predecessor.
+* **Find Outgoing Neighbors (Successors of `u`)**
+    * **Goal:** Find all vertices that `u` has an edge *to*.
+    * **Algorithm:** Iterate through the entire row `u`. If `matrix[u][j]` indicates an edge, then `j` is a successor.
 
-* ### Breadth-First Search (BFS)
-    BFS explores the graph layer by layer, starting from a source vertex.   
+* **Find Incoming Neighbors (Predecessors of `u`)**
+    * **Goal:** Find all vertices that have an edge *to* `u`.
+    * **Algorithm:** Iterate through the entire column `u`. If `matrix[j][u]` indicates an edge, then `j` is a predecessor.
 
-    * **Description:** Visits all neighbors of a node before moving on to the neighbors' neighbors.
-    * **Data Structures:** A `queue` to manage nodes to visit and a `visited` array.
+### Graph Algorithms
+
+* **Breadth-First Search (BFS)**
+    * **Goal:** Explore neighbor nodes first, level by level, following edge directions.
     * **Algorithm:**
-        1.  Choose a `startVertex`. Add it to the `queue` and mark `visited[startVertex] = true`.
-        2.  While the `queue` is not empty:
-            * Dequeue a vertex, `current`.
-            * Process `current`.
-            * **Find Neighbors:** Iterate through the row for `current` (from `j = 0` to `V-1`):
-                * If `matrix[current][j] == 1` and `visited[j]` is `false`:
-                    * Mark `visited[j] = true`.
-                    * Enqueue `j`.
+        1.  Create a `queue` and a `visited` array.
+        2.  Add a `startVertex` to the queue and mark it as visited.
+        3.  While the queue is not empty:
+            * Dequeue a vertex `u`. Process it.
+            * Iterate through row `u` (from `v = 0` to `V-1`). If `matrix[u][v]` shows an edge and `v` has not been visited, mark `v` as visited and enqueue it.
 
-* ### Depth-First Search (DFS)
-    DFS explores as far as possible down each branch before backtracking.
-
-    * **Description:** Uses recursion (or a stack) to go deep into the graph's paths.
-    * **Data Structures:** A `visited` array and the system's call stack for recursion.
+* **Depth-First Search (DFS)**
+    * **Goal:** Explore as far as possible down each directed path before backtracking.
     * **Algorithm (Recursive):**
-        1.  Define a function `DFS(currentVertex, visited)`.
-        2.  Mark `visited[currentVertex] = true` and process the node.
-        3.  **Find Neighbors:** Iterate through the row for `currentVertex` (from `j = 0` to `V-1`):
-            * If `matrix[currentVertex][j] == 1` and `visited[j]` is `false`:
-                * Recursively call `DFS(j, visited)`.
+        1.  Mark the `currentVertex` as visited and process it.
+        2.  Iterate through the row for `currentVertex` (from `v = 0` to `V-1`).
+        3.  If `matrix[currentVertex][v]` shows an edge and `v` has not been visited, recursively call DFS on `v`.
 
-* ### Find All Paths
-    This algorithm uses backtracking (a form of DFS) to find all possible paths from a `source` to a `destination`.
-
-    * **Description:** Explores every possible route from `source` to `destination` without repeating vertices in a single path.
-    * **Data Structures:** A `visited` array and a list to store the `currentPath`.
-    * **Algorithm (Recursive):**
-        1.  Define `findAllPaths(u, destination, visited, path)`.
-        2.  Mark `visited[u] = true` and add `u` to the `path`.
-        3.  If `u` is the `destination`, print the `path`.
-        4.  Else, iterate through `u`'s row (from `j = 0` to `V-1`):
-            * If `matrix[u][j] == 1` and `visited[j]` is `false`:
-                * Recursively call `findAllPaths(j, destination, visited, path)`.
-        5.  **Backtrack:** Remove `u` from the `path` and set `visited[u] = false`. This is the crucial step that allows the node to be used in other paths.
-
-* ### Cycle Detection
-    A cycle in a directed graph is found by identifying a "back edge" during DFS, which is an edge leading to a node currently in the recursion stack.
-    
-    * **Description:** Uses a modified DFS to track the nodes being explored in the current path.
-    * **Data Structures:**
-        * `visited[]`: Tracks nodes visited in the entire traversal.
-        * `recursionStack[]`: Tracks nodes in the *current* recursion path.
+* **Cycle Detection**
+    * **Goal:** Determine if the digraph contains a directed cycle.
     * **Algorithm (DFS-based):**
-        1.  Define `isCycle(u, visited, recursionStack)`.
-        2.  Mark `visited[u] = true` and `recursionStack[u] = true`.
-        3.  Iterate through `u`'s row (from `j = 0` to `V-1`):
-            * If `matrix[u][j] == 1`:
-                * If `visited[j]` is `false` and a recursive call `isCycle(j, visited, recursionStack)` returns `true`, then a cycle is found. Return `true`.
-                * Else if `recursionStack[j]` is `true`, you've found a back edge to a node in the current path. A cycle exists. Return `true`.
-        4.  **Backtrack:** Set `recursionStack[u] = false` before the function returns.
-        5.  Return `false` if no cycles were found from this vertex.
+        1.  Perform a DFS traversal. Maintain two boolean arrays: `visited` (for the overall traversal) and `recursionStack` (for the current path).
+        2.  When visiting a node `u`, mark it as true in both `visited` and `recursionStack`.
+        3.  For each neighbor `v` of `u`:
+            * If `v` is already in the `recursionStack`, a back edge has been found, and a cycle exists.
+            * If `v` is not visited, recursively call the cycle detection on `v`.
+        4.  Before returning, remove `u` from the `recursionStack` (backtracking).
 
 ---
-## Properties
 
-* **Asymmetry:** The matrix `A` is generally not equal to its transpose ($A \neq A^T$).
-* **Out-Degree:** The sum of all values in a **row `i`** gives the out-degree of vertex `i` (the number of edges leaving it).
-* **In-Degree:** The sum of all values in a **column `j`** gives the in-degree of vertex `j` (the number of edges entering it).
-* **Walks of Length k:** The entry `(i, j)` in the matrix `A^k` gives the number of different directed walks of length `k` from vertex `i` to `j`.
-* **Transpose Graph ($G^T$):** The graph with all edge directions reversed can be found by simply taking the transpose of the adjacency matrix ($A^T$). This is useful in algorithms like Kosaraju's for finding strongly connected components.
+## Key Properties
+
+* **Asymmetry:** The matrix `A` is generally not equal to its transpose (`$A \neq A^T$`).
+* **Out-Degree:** The sum of all values in a **row `i`** gives the out-degree of vertex `i`.
+* **In-Degree:** The sum of all values in a **column `j`** gives the in-degree of vertex `j`.
+* **Transpose Graph:** The graph with all edge directions reversed can be found by simply taking the transpose of the adjacency matrix (`$A^T$`).
 
 ---
+
 ## Advantages 👍
 
-* **Fast Edge Lookup:** Checking for an edge `u -> v` is a very fast $O(1)$ operation.
-* **Simple Structure:** The representation is simple, especially for dense graphs where the number of edges is high.
-* **Degree Calculation:** Calculating in-degree and out-degree is straightforward by summing a column or row.
-* **Good for Linear Algebra:** Its structure is ideal for algorithms leveraging matrix operations.
+* **Extremely Fast Edge Lookup:** Checking for an edge `u → v` is an `$O(1)` operation.
+* **Simple Structure:** The representation is easy to implement, especially for dense graphs.
+* **Easy Degree Calculation:** Finding the in-degree and out-degree is straightforward by summing a column or row, respectively.
 
 ---
+
 ## Disadvantages 👎
 
-* **High Space Cost:** The $O(V^2)$ space complexity is highly inefficient for **sparse graphs**.
-* **Slow Neighbor Finding:** Finding all successors (or predecessors) always takes $O(V)$ time, regardless of the actual out-degree (or in-degree).
-* **Costly Vertex Operations:** Adding or removing a vertex requires rebuilding the entire matrix, an $O(V^2)$ operation.
+* **High Space Cost:** The `$O(V^2)` space complexity is highly inefficient for **sparse graphs**.
+* **Slow Neighbor Finding:** Finding all outgoing or incoming neighbors always takes `$O(V)` time, which is slow for sparse graphs.
+* **Costly Vertex Operations:** Adding or removing a vertex requires rebuilding the entire matrix, an expensive `$O(V^2)` operation.
 
 ---
-## Application
 
-The adjacency matrix for a directed graph is most useful when:
-* The graph is **dense** or the number of vertices is small.
-* You need to perform **frequent edge lookups**.
-* Analyzing state transitions, such as in **Finite Automata** or **Markov Chains**.
-* Modeling dependencies, like in a task graph for a build system or in a compiler.
-* Implementing algorithms like **PageRank**, which models the web as a massive directed graph.
+## Applications
+
+The adjacency matrix for a directed graph is most useful when the graph is **dense** or the number of vertices is small.
+
+* **State Machines and Markov Chains:** The transition matrix is a natural fit for this representation.
+* **Dependency Analysis:** Useful when you need to frequently and quickly check for direct dependencies between a pair of items.
+* **PageRank Algorithm:** The conceptual model of the web graph for this algorithm is a massive adjacency matrix.
 
 ---
-## Time Complexity
 
-| Operation                       | Time Complexity | Notes                                       |
-| :------------------------------ | :-------------- | :------------------------------------------ |
-| **Space** | $O(V^2)$        | Main disadvantage for sparse graphs.        |
-| **Add/Remove Edge** | $O(1)$          | A key advantage.                            |
-| **Check for Edge** | $O(1)$          | A key advantage.                            |
-| **Find Out-degree / In-degree** | $O(V)$          | Must scan an entire row/column.             |
-| **BFS / DFS Traversal** | $O(V^2)$        | Each node visit requires an $O(V)$ scan.    |
-| **Add/Remove Vertex** | $O(V^2)$        | Requires rebuilding the entire matrix.      |
+## Time Complexity Summary
+
+Let `V` be the number of vertices.
+
+| Operation                 | Time Complexity |
+| :------------------------ | :-------------: |
+| **Space Complexity** |   `$O(V^2)`   |
+| **Add/Remove Edge** |     `$O(1)`     |
+| **Check Adjacency (u → v)**|     `$O(1)`     |
+| **Find In/Out-Degree** |     `$O(V)`     |
+| **Find Neighbors** |     `$O(V)`     |
+| **Add/Remove Vertex** |   `$O(V^2)`   |
+| **Graph Traversal (BFS/DFS)**|   `$O(V^2)`   |
