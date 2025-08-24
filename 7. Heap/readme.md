@@ -1,108 +1,97 @@
-# Heap Data Structure Explained
+## Heap: The Priority Queue's Engine ▲
 
-A **Heap** is a specialized tree-based data structure that satisfies the **heap property**:
+A **Heap** is a specialized tree-based data structure that satisfies the **heap property**. It is structured as a **complete binary tree**, which allows it to be efficiently stored and manipulated in an array.
 
-* **Min-Heap Property:** For every node `i` other than the root, `parent(i) <= A[i]`, where `A` is the array representing the heap. The root node contains the smallest element.
-* **Max-Heap Property:** For every node `i` other than the root, `parent(i) >= A[i]`. The root node contains the largest element.
-
-Heaps are typically implemented using an array, which makes them very efficient in terms of both time and space complexity.
+Its primary purpose is to always keep the element with the highest priority (either the largest or smallest value) at the root of the tree. This makes it the perfect underlying structure for implementing a Priority Queue.
 
 ---
 
-## Types of Heaps
+## The Two Types of Heaps
 
-There are two main types of heaps:
+A heap is defined by the relationship between a parent node and its children.
 
-* **Min-Heap:** The smallest element is always at the root.
-* **Max-Heap:** The largest element is always at the root.
-
----
-
-## Basic Operations
-
-### 🔹 Insertion
-
-1.  Append the new element at the end of the heap array.
-2.  **Heapify Up (or Bubble Up):** Compare the new element with its parent.
-    * If it violates the heap property (e.g., in a min-heap, if the element is smaller than its parent), swap them.
-    * Repeat this process until the heap property is satisfied or the element reaches the root.
-
-### 🔹 Extraction (Remove Min/Max)
-
-1.  Replace the root element (min or max) with the last element of the heap array.
-2.  Remove the last element (which was the original root).
-3.  **Heapify Down (or Bubble Down):** Compare the new root element with its children.
-    * In a min-heap, if the root is larger than either child, swap it with the smaller child. If it's larger than both, swap with the smaller of the two.
-    * In a max-heap, if the root is smaller than either child, swap it with the larger child. If it's smaller than both, swap with the larger of the two.
-    * Repeat this process until the heap property is satisfied or the element becomes a leaf.
-
-### 🔹 Peek (Get Min/Max)
-
-* For a min-heap, the root element (at index 0 in the array) is the minimum.
-* For a max-heap, the root element (at index 0 in the array) is the maximum.
-* This operation takes **O(1)** time as the root is directly accessible.
-
-### 🔹 Heapify (Build Heap)
-
-* This operation converts an array into a heap.
-* One common approach is to iterate through the array from the first non-leaf node up to the root and apply the `heapify down` operation on each node.
-* The first non-leaf node is typically at index `n/2 - 1` (for a 0-indexed array of size `n`).
-* The time complexity of building a heap is **O(n)**.
+* **[Max-Heap](Max-Heap/readme.md):** The value of each parent node is **greater than or equal to** the values of its children. The **largest** element in the dataset is always at the root.
+* **[Min-Heap](Min-Heap/readme.md):** The value of each parent node is **less than or equal to** the values of its children. The **smallest** element in the dataset is always at the root.
 
 ---
 
-## Array Representation of a Heap
+## The Array Representation
 
-For a node at index `i` (0-indexed array):
+The key to a heap's efficiency is that it's a **complete binary tree**. This means all levels of the tree are filled, except possibly the last level, which is filled from left to right. This "no gaps" structure allows the entire tree to be represented compactly in an array without needing pointers.
 
-* **Parent(i):** `floor((i - 1) / 2)`
-* **Left Child(i):** `2 * i + 1`
-* **Right Child(i):** `2 * i + 2`
-
----
-
-## Properties
-
-* It's a **complete binary tree** (all levels are completely filled except possibly the last level, which is filled from left to right).
-* Satisfies the **heap property** (min-heap or max-heap).
-* The root always contains the minimum (in a min-heap) or maximum (in a max-heap) element.
+For a node at a given index `i` in a 0-indexed array:
+* Its parent is at index: **`floor((i - 1) / 2)`**
+* Its left child is at index: **`2 * i + 1`**
+* Its right child is at index: **`2 * i + 2`**
 
 ---
 
-## Advantages
+## Operations and Algorithms
 
-* **Efficient Extraction of Min/Max:** O(log n) time complexity.
-* **Efficient Insertion:** O(log n) time complexity.
-* **Efficient Building:** O(n) time complexity to build a heap from an array.
-* **Space Efficiency:** Can be efficiently implemented using an array.
+The core of a heap is the "heapify" process, which restores the heap property after a modification.
+
+* **Insert**
+    * **Goal:** Add a new element to the heap while maintaining the heap property.
+    * **Algorithm (Heapify-Up / Bubble-Up):**
+        1.  Add the new element to the first available spot in the array (the bottom-left of the tree).
+        2.  Compare the new element with its parent.
+        3.  If it violates the heap property (e.g., it's larger than its parent in a max-heap), swap them.
+        4.  Repeat this process, "bubbling up" the element until the heap property is restored or the root is reached.
+
+* **Extract-Max / Extract-Min**
+    * **Goal:** Remove the root element (the highest priority) and restore the heap property.
+    * **Algorithm (Heapify-Down / Sift-Down):**
+        1.  Swap the root element with the *last* element in the array.
+        2.  Remove the last element from the array (this is the value you want to return).
+        3.  The element that was previously at the end is now the new root, and it's likely in the wrong place.
+        4.  Compare this new root with its children. If it violates the heap property, swap it with its larger (for max-heap) or smaller (for min-heap) child.
+        5.  Repeat this process, "sifting down" the element until the heap property is restored.
+
+* **Peek**
+    * **Goal:** View the highest priority element without removing it.
+    * **Algorithm:** Simply return the element at index 0 of the array.
 
 ---
 
-## Disadvantages
+## Key Properties
 
-* **Inefficient Search for Arbitrary Elements:** Searching for an element that is not the minimum or maximum can take O(n) time as the heap structure doesn't maintain a sorted order for non-root elements.
-* **Not Inherently Sorted:** Unlike a Binary Search Tree, a heap does not provide a sorted traversal of its elements without extra effort.
+* **Heap Property:** It must satisfy either the Max-Heap or Min-Heap property throughout the tree.
+* **Complete Binary Tree Structure:** This is a strict structural requirement that enables the efficient array implementation.
+* **Partial Ordering:** A heap is not fully sorted, but it is ordered in a specific way that ensures the root is always the max/min element.
+
+---
+
+## Advantages 👍
+
+* **Fast Access to Max/Min:** Getting the highest priority element (`peek`) is an extremely fast `$O(1)` operation.
+* **Efficient Insertions/Deletions:** Both `insert` and `extract` are efficient logarithmic operations (`$O(\log n)`), as the "heapify" process only needs to traverse the height of the tree.
+* **Space Efficient:** The array implementation has no overhead for pointers, making it very compact.
+* **Fast Construction:** A heap can be built from an unsorted array in optimal linear time (`$O(n)`).
+
+---
+
+## Disadvantages 👎
+
+* **Slow Search:** A heap is not designed for searching. Finding an element other than the root requires a linear scan of the array, which takes `$O(n)` time. For searching, a Binary Search Tree is far superior.
+* **Not Sorted:** Traversing a heap from index 0 to `n` will not yield the elements in sorted order.
 
 ---
 
 ## Applications
 
-* **Heap Sort:** An efficient sorting algorithm with O(n log n) time complexity.
-* **Priority Queues:** Heaps are the underlying data structure for implementing priority queues, which are used in various algorithms like Dijkstra's algorithm and task scheduling.
-* **Graph Algorithms:** Used in algorithms like Prim's algorithm and Dijkstra's algorithm for finding minimum spanning trees and shortest paths.
-* **Median Maintenance:** Heaps can be used to efficiently track the median of a stream of numbers.
-* **K Largest/Smallest Elements:** Heaps can efficiently find the k largest or smallest elements in an array.
+* **Priority Queues:** This is the most common use case. Heaps are the standard, most efficient way to implement a priority queue.
+* **Heap Sort:** An efficient, in-place sorting algorithm that uses a heap to sort elements in `$O(n \log n)` time.
+* **Graph Algorithms:** Crucial for algorithms like **Dijkstra's** (for shortest path) and **Prim's** (for minimum spanning tree), which use a priority queue to efficiently manage which vertex to process next.
+* **Finding the Kth Largest/Smallest Element:** A heap is an excellent tool for solving this common problem in `$O(n \log k)` time.
 
 ---
 
-## Time Complexity
+## Time Complexity Summary
 
-| Operation        | Time Complexity |
-| ---------------- | --------------- |
-| Insertion        | O(log n)      |
-| Extraction (Min/Max) | O(log n)      |
-| Peek (Min/Max)   | O(1)          |
-| Heapify (Build)  | O(n)          |
-| Search           | O(n)          |
-
-*Where n is the number of elements in the heap.*
+| Operation          | Time Complexity |
+| :----------------- | :-------------: |
+| **Peek (Get Max/Min)** |     `$O(1)`     |
+| **Insert** |   `$O(\log n)`  |
+| **Extract-Max/Min**|   `$O(\log n)`  |
+| **Build Heap (from array)**|     `$O(n)`     |
+| **Search (for any element)** |     `$O(n)`     |
